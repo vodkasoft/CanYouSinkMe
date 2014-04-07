@@ -118,7 +118,13 @@ Content-Length: 19
 ```___
 **Method**: PUT
 
-Creates or updates a user**Request Parameters**:
+Creates or updates a user
+
+**URI Parameters**
+
+| Parameter | Data Type | Description        |
+|:----------|:----------|:-------------------|
+| id        | string    | User's Facebook id |**Request Parameters**:
 
 | Parameter | Data Type   | Description                                       |
 |:----------|:------------|:--------------------------------------------------|
@@ -280,7 +286,7 @@ Content-Type: application/json; charset=utf-8
 ```
 ---
 
-##Leaderbaords
+##Leaderboards
 
 Leaderboards contain lists of sorted Users according to their experience. There are three types of leaderboards: global, country and friends.
 
@@ -289,7 +295,7 @@ Leaderboards contain lists of sorted Users according to their experience. There 
 | Method | Request URI                                             | Description                           |
 |:-------|:--------------------------------------------------------|:--------------------------------------|
 | GET    | [/leaderboards](#leaderboards-1)                        | Obtains the global leaderboard        |
-| GET    | [/leaderboards/{countryCode}](#leaderboardscountryCode) | Obtains the leaderboard for a country |
+| GET    | [/leaderboards/{countrycode}](#leaderboardscountryCode) | Obtains the leaderboard for a country |
 
 ###/leaderboards
 

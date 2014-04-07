@@ -12,5 +12,8 @@
     <string name="title_activity_host_game">HostGame</string>
     <string name="title_activity_join_game">JoinGame</string>
     <string name="title_activity_gaming">Gaming</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
 
 </resources>

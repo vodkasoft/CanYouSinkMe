@@ -25,7 +25,7 @@ class _LeaderboardHandler(JsonRequestHandler):
         """ Executes a query on the User entity and outputs the resulting id's
 
             Parameters:
-            :param query: the query to be executed
+            :param query: query to be executed
         """
         query_offset = self.request.get('offset', 0)
         query_limit = self.request.get('limit', 10)
@@ -49,10 +49,12 @@ class GlobalLeaderboardHandler(_LeaderboardHandler):
             Path: /leaderboards
 
             Request Parameters:
-            pretty            [true|false]    output in human readable format
+            offset          int                 number of entries to skip
+            limit           int                 maximum number of entries to return
+            pretty          [true|false]        whether to output in human readable format or not
 
             Returns:
-            :return: An array of user id's
+            :return: an array of user id's
         """
         query = User.query().order(-User.experience)
         self.query_leaderboard(query)
@@ -67,14 +69,19 @@ class CountryLeaderboardHandler(_LeaderboardHandler):
             Method: GET
             Path: /leaderboards/{country_code}
 
+            URI Parameters:
+            country_code    sting               code for the country of the leaderboard
+
             Request Parameters:
-            pretty            [true|false]    output in human readable format
+            offset          int                 number of entries to skip
+            limit           int                 maximum number of entries to return
+            pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
-            :param country_code: the code of the country whose leaderboard will be fetched
+            :param country_code: code for the country of the leaderboardd
 
             Returns:
-            :return: An array of users id's
+            :return: an array of users id's
         """
         query = User.query().order(-User.experience).filter(User.country_code == country_code)
         self.query_leaderboard(query)

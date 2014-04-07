@@ -25,10 +25,10 @@ def _validate_non_negative_int(value):
     """ Validates that a number not negative
 
         Parameters:
-        :param value: the input value to be validated
+        :param value: input value to be validated
 
         Returns:
-        :return: the sanitized integer value if it can sanitized
+        :return: sanitized integer value if it can sanitized
 
         Raises:
         :raises: BadValueError if the number is negative
@@ -48,17 +48,17 @@ _PERFECT_SCORE = 200
 class User(ndb.Model):
     """ User Entity """
 
-    """ The image that is displayed for the user """
+    """ Image that is displayed for the user """
     avatar = ndb.TextProperty('a', indexed=False, required=True)
 
-    """ The code for the country from where the user plays """
+    """ Code for the country from where the user plays """
     country_code = ndb.StringProperty('c', indexed=True, required=True,
                                       validator=lambda prop, value: value.upper())
 
-    """ The name displayed during matches and match finding """
+    """ Name displayed during matches and match finding """
     display_name = ndb.StringProperty('d', required=True)
 
-    """ The total experienced the player has earned """
+    """ Total experienced the player has earned """
     experience = ndb.IntegerProperty('e', default=0, indexed=True, required=True,
                                      validator=lambda prop, value:
                                      _validate_non_negative_int(value))
@@ -66,31 +66,31 @@ class User(ndb.Model):
     """ Whether the player is logged in or not """
     logged_in = ndb.BooleanProperty('l', default=False, required=True)
 
-    """ The rank or level for the player, based on the experienced """
+    """ Rank or level for the player, based on the experienced """
     rank = ndb.ComputedProperty(lambda self: int(sqrt(self.experience / float(_PERFECT_SCORE))))
 
-    """ The timestamp from when the user was created """
+    """ Timestamp from when the user was created """
     timestamp = ndb.DateTimeProperty('t', auto_now_add=True, indexed=False, required=True)
 
 
 class Match(ndb.Model):
     """ Match Entity """
 
-    """ The key for the player who joined the match """
+    """ Key for the player who joined the match """
     guest = ndb.KeyProperty('g', kind=User, indexed=True, required=True)
 
-    """ The points scored by the guest player """
+    """ Points scored by the guest player """
     guest_points = ndb.IntegerProperty('gp', default=0, required=True,
                                        validator=lambda prop, value:
                                        _validate_non_negative_int(value))
 
-    """ The key for the player who hosted the match """
+    """ Key for the player who hosted the match """
     host = ndb.KeyProperty('h', kind=User, indexed=True, required=True)
 
-    """ The points scored by the host player """
+    """ Points scored by the host player """
     host_points = ndb.IntegerProperty('hp', default=0, required=True,
                                       validator=lambda prop, value:
                                       _validate_non_negative_int(value))
 
-    """ The timestamp from where the match was created """
+    """ Timestamp from where the match was created """
     timestamp = ndb.DateTimeProperty('t', auto_now_add=True, indexed=False, required=True)

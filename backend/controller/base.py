@@ -26,7 +26,7 @@ class JsonRequestHandler(RequestHandler):
         """ Outputs an error and sends a 400 status code
 
             Parameters:
-            :param message: the error message, default 'Unknown error'
+            :param message: error message, defaults to 'Unknown error'
         """
         self.write_message(400, {'error': message})
 
@@ -34,8 +34,8 @@ class JsonRequestHandler(RequestHandler):
         """ Outputs a message with a status code as a JSON object
 
             Parameters:
-            :param status_code: the status code for the HTTP response
-            :param message: the message, optional
+            :param status_code: status code for the HTTP response
+            :param message: message (optional)
         """
         pretty_print = self.request.get('pretty') == 'true'
         self.response.status = status_code

@@ -21,11 +21,11 @@ def encode_json(data, pretty):
     """ Formats an object as JSON
 
         Parameters:
-        :param data: the data the will be encoded
+        :param data: data the will be encoded
         :param pretty: whether the output should be human readable or not
 
         Returns:
-        :return: the data encoded as JSON
+        :return: data encoded as JSON
     """
     if pretty:
         return format_as_pretty_json(data)
@@ -37,10 +37,10 @@ def format_as_pretty_json(data):
     """ Encodes an object as JSON that is human readable
 
         Parameters:
-        :param data: the data that will be encoded
+        :param data: data that will be encoded
 
         Returns:
-        :return: the data encoded in a human readable JSON format
+        :return: data encoded in a human readable JSON format
     """
     return dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
@@ -51,9 +51,9 @@ def format_as_compact_json(data):
 
 
         Parameters:
-        :param data: the data that will be encoded
+        :param data: data that will be encoded
 
         Returns:
-        :return: the data encoded in a compact JSON format
+        :return: data encoded in a compact JSON format
     """
     return dumps(data, separators=(',', ':'))

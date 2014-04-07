@@ -36,15 +36,15 @@ class UserMatchesHandler(JsonRequestHandler):
             Path: /users/{id}/matches
 
             URI Parameters:
-            id              string              the id of the user
+            id              string              id of the user
 
             Request Parameters:
-            offset          int                 the number of entries to skip
-            limit           int                 the maximum number of entries to return
-            pretty          [true|false]        output in human readable format
+            offset          int                 number of entries to skip
+            limit           int                 maximum number of entries to return
+            pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
-            :param user_id: the id of the user
+            :param user_id: id of the user
 
             Returns:
             :return: a JSON array with the data for the requested matches
@@ -78,11 +78,11 @@ class MatchHandler(JsonRequestHandler):
             Path: /matches/{match_id}
 
             Request Parameters:
-            match_id        int                 the id of the match
-            pretty          [true|false]        output in human readable format
+            match_id        int                 id of the match
+            pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
-            :param match_id: the id of the match
+            :param match_id: id of the match
 
             Returns:
             :return: a JSON object with the match's data
@@ -106,12 +106,14 @@ class MatchHandler(JsonRequestHandler):
             Method: DELETE
             Path: /matches/{match_id}
 
+            URI Parameters:
+            match_id        int                 id of the match
+
             Request Parameters:
-            match_id        int                 the id of the match
-            pretty          [true|false]        output in human readable format
+            pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
-            :param match_id: the id of the match
+            :param match_id: id of the match
 
             Returns:
             :return: Empty response
@@ -131,7 +133,7 @@ def _update_entities(*entities):
     """ Updates entities in a transaction
 
         Parameters:
-        :param entities: then entities to be updated
+        :param entities: entities to be updated
 
         Returns:
         :return: an array with the result for each entity
@@ -161,12 +163,12 @@ class MatchSetHandler(JsonRequestHandler):
             Path: /matches
 
             URI Parameters:
-            pretty          [true|false]        output in human readable format
+            pretty          [true|false]        whether to output in human readable format or not
 
             Request Parameters:
-            match           JSON object         the data for the match
+            match           JSON object         data for the match
 
-            :return: The key for the created match
+            :return: the key for the created match
         """
         match_data = self.request.get('match')
         if match_data is '':

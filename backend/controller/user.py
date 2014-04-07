@@ -45,8 +45,8 @@ class _BaseUserHandler(JsonRequestHandler):
         """ Creates or updates a user
 
             Parameters:
-            :param user_id: the id of the user
-            :param user_data: the data associated to the user
+            :param user_id: id of the user
+            :param user_data: data associated to the user
         """
         user = User.get_by_id(user_id)
         try:
@@ -87,13 +87,13 @@ class UserHandler(_BaseUserHandler):
             Path: /users/{user_id}
 
             URI Parameters:
-            id              string              the id of the user
+            id              string              id of the user
 
             Request Parameters:
-            pretty          [true|false]        output in human readable format
+            pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
-            :param user_id: the id of the user
+            :param user_id: id of the user
 
             Returns:
             :return: user data with id, avatar, countryCode, displayName, rank and experience
@@ -117,14 +117,14 @@ class UserHandler(_BaseUserHandler):
             Path: /users/{user_id}
 
             URI Parameters:
-            id              string              the id of the user
+            id              string              user's Facebook id
 
             Request Parameters:
-            user            JSON object         the data for the user
-            pretty          [true|false]        output in human readable format
+            user            JSON object         data for the user
+            pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
-            :param user_id: the id of the user
+            :param user_id: id of the user
 
             Returns:
             :return: a JSON object with the id of the user
@@ -150,7 +150,7 @@ class UserSetHandler(_BaseUserHandler):
 
             Request Parameters:
             users           JSON array          id's of the users
-            pretty          [true|false]        output in human readable format
+            pretty          [true|false]        whether to output in human readable format or not
 
             Returns:
             :return: a list with the data of the requested users
@@ -183,8 +183,8 @@ class UserSetHandler(_BaseUserHandler):
             Path: /users
 
             Request Parameters:
-            user            JSON object         the data for the user
-            pretty          [true|false]        output in human readable format
+            user            JSON object         data for the user
+            pretty          [true|false]        whether to output in human readable format or not
 
             Returns:
             :return: a JSON object with the id of the user

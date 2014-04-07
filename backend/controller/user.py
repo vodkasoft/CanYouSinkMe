@@ -18,6 +18,7 @@ from json import loads
 
 from google.appengine.ext.db import TransactionFailedError
 from google.appengine.ext.ndb import Key
+from google.appengine.api.datastore_errors import BadValueError
 
 from controller.base import JsonRequestHandler
 from model.datastore import User
@@ -71,7 +72,7 @@ class _BaseUserHandler(JsonRequestHandler):
             self.write_message(400, {'error': 'Missing attributes for user'})
         except TransactionFailedError:
             self.write_message(400, {'error': 'Unable to store user'})
-        except Exception:
+        except BadValueError:
             # Thrown when model validations fail
             self.write_message(400, {'error': 'Invalid data'})
 

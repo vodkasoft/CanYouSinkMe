@@ -13,25 +13,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import logging
 from math import sqrt
+
+from google.appengine.api.datastore_errors import BadValueError
 
 from google.appengine.ext import ndb
 
 
-def _validate_positive_int(value):
-    """ Validates that a number is positive
+def _validate_non_negative_int(value):
+    """ Validates that a number not negative
 
         Parameters:
         :param value: the input value to be validated
 
         Returns:
-        :return: the sanitized value if it can sanitized
+        :return: the sanitized integer value if it can sanitized
+
+        Raises:
+        :raises: BadValueError if the number is negative
     """
     if isinstance(value, basestring):
         value = float(value)
-    if value < 0:
-        raise Exception
+    if type(value) not in [int, float] or value < 0:
+        logging.info("NOT... HERE")
+        raise BadValueError
     return int(value)
 
 
@@ -54,7 +60,8 @@ class User(ndb.Model):
 
     """ The total experienced the player has earned """
     experience = ndb.IntegerProperty('e', default=0, indexed=True, required=True,
-                                     validator=lambda prop, value: _validate_positive_int(value))
+                                     validator=lambda prop, value:
+                                     _validate_non_negative_int(value))
 
     """ Whether the player is logged in or not """
     logged_in = ndb.BooleanProperty('l', default=False, required=True)
@@ -74,14 +81,16 @@ class Match(ndb.Model):
 
     """ The points scored by the guest player """
     guest_points = ndb.IntegerProperty('gp', default=0, required=True,
-                                       validator=lambda prop, value: _validate_positive_int(value))
+                                       validator=lambda prop, value:
+                                       _validate_non_negative_int(value))
 
     """ The key for the player who hosted the match """
     host = ndb.KeyProperty('h', kind=User, indexed=True, required=True)
 
     """ The points scored by the host player """
     host_points = ndb.IntegerProperty('hp', default=0, required=True,
-                                      validator=lambda prop, value: _validate_positive_int(value))
+                                      validator=lambda prop, value:
+                                      _validate_non_negative_int(value))
 
     """ The timestamp from where the match was created """
     timestamp = ndb.DateTimeProperty('t', auto_now_add=True, indexed=False, required=True)

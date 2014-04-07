@@ -20,9 +20,10 @@ from google.appengine.ext import ndb
 from google.appengine.ext.db import TransactionFailedError
 from google.appengine.ext.ndb import Future
 from google.net.proto.ProtocolBuffer import ProtocolBufferDecodeError
+from google.appengine.api.datastore_errors import BadValueError
 
 from controller.base import JsonRequestHandler
-from model.datastore import Match, User
+from model.datastore import Match, User, DatastoreValidationError
 
 
 class UserMatchesHandler(JsonRequestHandler):
@@ -171,12 +172,14 @@ class MatchSetHandler(JsonRequestHandler):
                 # Wait for async operations before writing message
                 Future.wait_all([guest_update_future, host_update_future])
             self.write_message(status_code, message)
-        except (AttributeError, ValueError):
+        except ValueError:
             self.write_error('Malformed JSON')
         except KeyError:
             self.write_error('Missing attributes for match')
         except TransactionFailedError:
-            self.write_error('Unable to store match')
-        except Exception:
+            self.write_message(507, 'Unable to store match')
+        except AttributeError:
+            self.write_error('Invalid id')
+        except BadValueError:
             # Thrown when model validations fail
             self.write_error('Invalid data')

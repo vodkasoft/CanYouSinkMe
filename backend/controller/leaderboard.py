@@ -48,7 +48,7 @@ class GlobalLeaderboardHandler(_LeaderboardHandler):
             Method: GET
             Path: /leaderboards
 
-            Query Parameters:
+            Request Parameters:
             pretty            [true|false]    output in human readable format
 
             Returns:
@@ -67,7 +67,7 @@ class CountryLeaderboardHandler(_LeaderboardHandler):
             Method: GET
             Path: /leaderboards/{country_code}
 
-            Query Parameters:
+            Request Parameters:
             pretty            [true|false]    output in human readable format
 
             Parameters:

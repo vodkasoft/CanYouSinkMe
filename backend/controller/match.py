@@ -35,8 +35,10 @@ class UserMatchesHandler(JsonRequestHandler):
             Method: GET
             Path: /users/{id}/matches
 
-            Query Parameters:
+            URI Parameters:
             id              string              the id of the user
+
+            Request Parameters:
             offset          int                 the number of entries to skip
             limit           int                 the maximum number of entries to return
             pretty          [true|false]        output in human readable format
@@ -75,7 +77,7 @@ class MatchHandler(JsonRequestHandler):
             Method: GET
             Path: /matches/{match_id}
 
-            Query Parameters:
+            Request Parameters:
             match_id        int                 the id of the match
             pretty          [true|false]        output in human readable format
 
@@ -104,7 +106,7 @@ class MatchHandler(JsonRequestHandler):
             Method: DELETE
             Path: /matches/{match_id}
 
-            Query Parameters:
+            Request Parameters:
             match_id        int                 the id of the match
             pretty          [true|false]        output in human readable format
 
@@ -158,8 +160,10 @@ class MatchSetHandler(JsonRequestHandler):
             Method: POST
             Path: /matches
 
-            Query Parameters:
+            URI Parameters:
             pretty          [true|false]        output in human readable format
+
+            Request Parameters:
             match           JSON object         the data for the match
 
             :return: The key for the created match

@@ -88,6 +88,8 @@ class UserHandler(_BaseUserHandler):
 
             URI Parameters:
             id              string              the id of the user
+
+            Request Parameters:
             pretty          [true|false]        output in human readable format
 
             Parameters:
@@ -117,7 +119,7 @@ class UserHandler(_BaseUserHandler):
             URI Parameters:
             id              string              the id of the user
 
-            Query Parameters:
+            Request Parameters:
             user            JSON object         the data for the user
             pretty          [true|false]        output in human readable format
 
@@ -146,7 +148,7 @@ class UserSetHandler(_BaseUserHandler):
             Method: GET
             Path: /users
 
-            Query Parameters:
+            Request Parameters:
             users           JSON array          id's of the users
             pretty          [true|false]        output in human readable format
 
@@ -180,7 +182,7 @@ class UserSetHandler(_BaseUserHandler):
             Method: POST
             Path: /users
 
-            Query Parameters:
+            Request Parameters:
             user            JSON object         the data for the user
             pretty          [true|false]        output in human readable format
 

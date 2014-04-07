@@ -22,7 +22,7 @@ class _LeaderboardHandler(JsonRequestHandler):
     """ Base request handler for leaderboard request """
 
     def query_leaderboard(self, query):
-        """ Executes a query on the User entity and outputs the result
+        """ Executes a query on the User entity and outputs the resulting id's
 
             Parameters:
             :param query: the query to be executed
@@ -34,12 +34,8 @@ class _LeaderboardHandler(JsonRequestHandler):
         if query_limit < 0 or type(query_limit) is not int:
             self.write_error('Invalid limit')
         result = []
-        for user in query.fetch(offset=query_offset, limit=query_limit):
-            result.append({'id': user.key.id(),
-                           'avatar': user.avatar,
-                           'countryCode': user.country_code,
-                           'displayName': user.display_name,
-                           'rank': user.rank})
+        for user_key in query.fetch(keys_only=True, offset=query_offset, limit=query_limit):
+            result.append({'id': user_key.id()})
         self.write_message(200, result)
 
 
@@ -56,7 +52,7 @@ class GlobalLeaderboardHandler(_LeaderboardHandler):
             pretty            [true|false]    output in human readable format
 
             Returns:
-            :return: An array of users
+            :return: An array of user id's
         """
         query = User.query().order(-User.experience)
         self.query_leaderboard(query)
@@ -78,7 +74,7 @@ class CountryLeaderboardHandler(_LeaderboardHandler):
             :param country_code: the code of the country whose leaderboard will be fetched
 
             Returns:
-            :return: An array of users
+            :return: An array of users id's
         """
         query = User.query().order(-User.experience).filter(User.country_code == country_code)
         self.query_leaderboard(query)

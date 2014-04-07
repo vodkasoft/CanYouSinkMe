@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
+
 public class HostOrJoin extends Activity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +19,9 @@ public class HostOrJoin extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_host_or_join);
+
+        BleutoothManager.setActivity(this);
+        BleutoothManager.enableBluetooth();
     }
 
     public void GoToJoinGame(View view){

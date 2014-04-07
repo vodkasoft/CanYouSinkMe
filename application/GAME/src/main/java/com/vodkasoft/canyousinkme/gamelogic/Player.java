@@ -2,52 +2,48 @@ package com.vodkasoft.canyousinkme.gamelogic;
 
 import android.media.Image;
 
+import java.util.UUID;
+
+/**
+ * Vodkasoft (R)
+ * Created by jomarin on 4/5/14.
+ */
 public class Player {
 
-    private String DisplayName;
-
-    private Image Avatar;
-
-    private int Rank;
-
-    private int CountryCode;
-
-    public Player(String pDisplayName, Image pAvatar, int pRank, int pCountryCode) {
-        this.DisplayName = pDisplayName;
-        this.Avatar = pAvatar;
-        this.Rank = pRank;
-        this.CountryCode = pCountryCode;
-    }
-
-    public int getCountryCode() {
-        return CountryCode;
-    }
-
-    public void setCountryCode(int countryCode) {
-        CountryCode = countryCode;
-    }
+    private Image avatar;
+    private String displayName;
+    private UUID id;
+    private int rank;
 
     public Image getAvatar() {
-        return Avatar;
+        return avatar;
     }
 
     public void setAvatar(Image avatar) {
-        Avatar = avatar;
-    }
-
-    public int getRank() {
-        return Rank;
-    }
-
-    public void setRank(int rank) {
-        Rank = rank;
+        this.avatar = avatar;
     }
 
     public String getDisplayName() {
-        return DisplayName;
+        return displayName;
     }
 
     public void setDisplayName(String displayName) {
-        DisplayName = displayName;
+        this.displayName = displayName;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 }

@@ -25,12 +25,11 @@
             android:id="@+id/uss_battleship" android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" android:src="@drawable/uss_battleship"
             android:layout_marginBottom="-50dp"/>
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/black_layer_up_tiny" android:layout_alignParentStart="true"
-            android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
-            android:id="list_join_game">
-    </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listview_joingame"
+        android:layout_below="@+id/black_layer_up_tiny"
+        android:layout_alignStart="@+id/black_layer_up_tiny"/>
 </RelativeLayout>

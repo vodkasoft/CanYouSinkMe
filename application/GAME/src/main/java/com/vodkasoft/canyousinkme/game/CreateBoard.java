@@ -1,6 +1,7 @@
 package com.vodkasoft.canyousinkme.game;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -50,6 +51,8 @@ public class CreateBoard extends Activity {
         if (SHIPA_LOCATED && SHIPB_LOCATED && SHIPC_LOCATED) {
             CharSequence CS = "All ships placed";
             showToastWithMessage(CS);
+            Intent intent = new Intent(this, Gaming.class);
+            startActivity(intent);
         }else{
             CharSequence CS = "There are ships left to be placed";
             showToastWithMessage(CS);

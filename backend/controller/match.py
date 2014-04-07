@@ -23,7 +23,7 @@ from google.net.proto.ProtocolBuffer import ProtocolBufferDecodeError
 from google.appengine.api.datastore_errors import BadValueError
 
 from controller.base import JsonRequestHandler
-from model.datastore import Match, User, DatastoreValidationError
+from model.datastore import Match, User
 
 
 class UserMatchesHandler(JsonRequestHandler):
@@ -124,11 +124,36 @@ class MatchHandler(JsonRequestHandler):
             self.write_error('Unable to delete match')
 
 
+@ndb.transactional(xg=True, retries=2)
+def _update_entities(*entities):
+    """ Updates entities in a transaction
+
+        Parameters:
+        :param entities: then entities to be updated
+
+        Returns:
+        :return: an array with the result for each entity
+
+        Raises:
+        :raises: TransactionFailedError if the transaction fails
+    """
+    futures = []
+    for entity in entities:
+        futures.append(entity.put_async())
+    Future.wait_all(futures)
+    results = []
+    for future in futures:
+        results.append(future.get_result())
+    return results
+
+
 class MatchSetHandler(JsonRequestHandler):
     """ Manages request to matches """
 
     def post(self):
         """ Creates a match
+
+            This operation is transactional
 
             Method: POST
             Path: /matches
@@ -153,10 +178,10 @@ class MatchSetHandler(JsonRequestHandler):
                 status_code = 400
                 message = {'error': 'Host and guest id cannot be equal'}
             else:
-                match_key = Match(guest=ndb.Key(User, guest_id),
-                                  guest_points=guest_points,
-                                  host=ndb.Key(User, host_id),
-                                  host_points=host_points).put()
+                match = Match(guest=ndb.Key(User, guest_id),
+                              guest_points=guest_points,
+                              host=ndb.Key(User, host_id),
+                              host_points=host_points)
                 # Asynchronously update player data
                 guest_future = User.get_by_id_async(guest_id)
                 host_future = User.get_by_id_async(host_id)
@@ -164,13 +189,12 @@ class MatchSetHandler(JsonRequestHandler):
                 host = host_future.get_result()
                 guest.experience += guest_points
                 host.experience += host_points
-                guest_update_future = guest.put_async()
-                host_update_future = host.put_async()
+                # Update entities
+                results = _update_entities(match, host, guest)
                 # Prepare message
+                match_key = results[0].urlsafe()
                 status_code = 201
-                message = {'id': match_key.urlsafe()}
-                # Wait for async operations before writing message
-                Future.wait_all([guest_update_future, host_update_future])
+                message = {'id': match_key}
             self.write_message(status_code, message)
         except ValueError:
             self.write_error('Malformed JSON')

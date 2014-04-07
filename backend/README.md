@@ -295,7 +295,7 @@ Leaderboards contain lists of sorted Users according to their experience. There 
 | Method | Request URI                                             | Description                           |
 |:-------|:--------------------------------------------------------|:--------------------------------------|
 | GET    | [/leaderboards](#leaderboards-1)                        | Obtains the global leaderboard        |
-| GET    | [/leaderboards/{countrycode}](#leaderboardscountryCode) | Obtains the leaderboard for a country |
+| GET    | [/leaderboards/{countrycode}](#leaderboardscountrycode) | Obtains the leaderboard for a country |
 
 ###/leaderboards
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Can You Sink Me</string>
+    <string name="action_settings">Action Settings</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_about">About</string>
+    <string name="title_activity_game__anonymous">Game_Anonymous</string>
+    <string name="title_activity_create_board">CreateBoard</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_host_or_join">HostOrJoin</string>
+    <string name="title_activity_host_game">HostGame</string>
+    <string name="title_activity_join_game">JoinGame</string>
+    <string name="title_activity_gaming">Gaming</string>
+
+</resources>

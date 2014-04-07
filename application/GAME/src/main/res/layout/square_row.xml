@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <ImageButton
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/game_v_rect"
+        android:id="@+id/_0"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_1"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_2"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_3"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_4"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_5"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_6"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_7"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_8"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_9"></ImageButton>
+    <ImageButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/game_v_rect"
+            android:id="@+id/_10"></ImageButton>
+
+
+</LinearLayout>

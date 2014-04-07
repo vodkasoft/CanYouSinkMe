@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.vodkasoft.canyousinkme.game.Main" android:background="#272727">
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/BlackBarUp" android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" android:src="@drawable/black_bar_up"
+            android:layout_marginLeft="-12dp" android:layout_marginRight="-12dp"
+            android:layout_marginTop="-50dp"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/uss_battleship" android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" android:src="@drawable/uss_battleship"
+            android:layout_marginBottom="-50dp"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/MainLogo" android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" android:src="@drawable/main_logo"/>
+    <ImageButton
+            android:onClick="GoLogin"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Multiplayer_btn" android:layout_below="@+id/BlackBarUp"
+            android:layout_alignParentStart="true" android:src="@drawable/multiplayer_btn"
+            android:layout_marginLeft="-12dp" android:layout_marginTop="-15dp"/>
+    <ImageButton
+            android:onClick="GoLogin"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Singleplayer_btn" android:layout_below="@+id/Multiplayer_btn"
+            android:layout_alignParentEnd="true" android:src="@drawable/singleplayer_btn"
+            android:layout_marginTop="-15dp" android:layout_marginRight="-12dp"/>
+    <ImageButton
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Leaderboards_btn" android:layout_below="@+id/Singleplayer_btn"
+            android:layout_alignParentStart="true" android:layout_marginLeft="-12dp"
+            android:src="@drawable/leaderboards_btn" android:layout_marginTop="-15dp"/>
+    <ImageButton
+            android:onClick="GoAbout"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/About_btn" android:layout_below="@+id/Leaderboards_btn"
+            android:layout_alignParentEnd="true" android:layout_marginRight="-12dp"
+            android:layout_marginTop="-15dp" android:src="@drawable/about_btn"/>
+</RelativeLayout>

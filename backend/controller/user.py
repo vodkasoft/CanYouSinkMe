@@ -56,6 +56,8 @@ class _BaseUserHandler(JsonRequestHandler):
                     user.avatar = user_data['avatar']
                 if user_data.get('countryCode') is not None:
                     user.country_code = user_data['countryCode']
+                if user.country_code is 'ZZ':
+                    user.country_code = self.request.headers['X-Appengine-Country']
                 if user_data.get('displayName') is not None:
                     user.display_name = user_data['displayName']
                 user.put()

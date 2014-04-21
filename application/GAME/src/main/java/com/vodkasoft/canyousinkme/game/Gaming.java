@@ -4,13 +4,13 @@ import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class Gaming extends Activity {
@@ -18,6 +18,7 @@ public class Gaming extends Activity {
     Integer[] Pair;
     GameManager gameManager;
     private TextView textViewChronometer;
+    Boolean Mine = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,29 +43,69 @@ public class Gaming extends Activity {
         pgridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Integer[] Pair = getMatrixCoords(i);
+                if(Mine){
+
+                }else{
+                    ImageView IV = (ImageView) view;
+                    IV.setImageResource(R.drawable.targeted);
+                }
             }
         });
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.g, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+    public Integer[] getMatrixCoords(int C) {
+        Integer[] Par = new Integer[2];
+        int k = 0;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (k == C) {
+                    Par[0] = i;
+                    Par[1] = j;
+                    return Par;
+                } else {
+                    k++;
+                }
+            }
         }
-        return super.onOptionsItemSelected(item);
+        return Par;
     }
 
+    public void GoToOpponent(View view){
+        Mine = false;
+        UpdateOpponentButtons();
+    }
+
+    public void UpdateOpponentButtons(){
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(true);
+        Shoot.setImageResource(R.drawable.shoot_btn);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(false);
+        Opponent.setImageResource(R.drawable.opponent_btn_disabled);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(true);
+        Mine.setImageResource(R.drawable.mine_btn);
+    }
+
+    public void GoToMine(View view){
+        Mine = true;
+        UpdateMineButtons();
+    }
+
+    public void UpdateMineButtons(){
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(false);
+        Shoot.setImageResource(R.drawable.shoot_btn_disabled);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(true);
+        Opponent.setImageResource(R.drawable.opponent_btn);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(false);
+        Mine.setImageResource(R.drawable.mine_btn_disabled);
+    }
 }

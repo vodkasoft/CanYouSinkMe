@@ -13,6 +13,8 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
+import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 
 public class CreateBoard extends Activity {
 
@@ -49,6 +51,7 @@ public class CreateBoard extends Activity {
 
     public void GoToWaiting(View view) {
         if (SHIPA_LOCATED && SHIPB_LOCATED && SHIPC_LOCATED) {
+            GameManager.setPlayerBoard(DUALMATRIX);
             CharSequence CS = "All ships placed";
             showToastWithMessage(CS);
             Intent intent = new Intent(this, Gaming.class);

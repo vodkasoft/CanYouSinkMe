@@ -29,7 +29,8 @@
             android:id="@+id/shoot_btn"
             android:background="@null"
             android:src="@drawable/shoot_btn_disabled" android:layout_below="@+id/gamelayerup"
-            android:layout_alignParentEnd="true" android:layout_marginRight="5dp"/>
+            android:layout_alignParentEnd="true" android:layout_marginRight="5dp"
+            android:onClick="sendMissile"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,4 +53,17 @@
             android:id="@+id/textViewChronometer"
             android:layout_alignBottom="@+id/opponent_btn"
             android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/textViewPlayerScore"
+        android:layout_below="@+id/gamelayerup"
+        android:layout_alignStart="@+id/container_grid_gaming"
+        android:layout_alignBottom="@+id/shoot_btn"
+        android:layout_alignEnd="@+id/textViewChronometer"
+        android:text="0"/>
+
+
 </RelativeLayout>

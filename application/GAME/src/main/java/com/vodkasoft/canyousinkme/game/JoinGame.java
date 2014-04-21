@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
+import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -54,10 +55,10 @@ public class JoinGame extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ArrayList<String> deviceAdresses = BleutoothManager.getDiscoverableDevicesAddress();
+                BleutoothManager.unregisterReceiver();
                 BluetoothDevice address = BleutoothManager.getAdapter().getRemoteDevice(deviceAdresses.get(i));
                 BleutoothManager.startClientConnection(address,
                         getResources().getString(R.string.app_uuid));
-
                 Intent intent = new Intent(JoinGame.this, CreateBoard.class);
                 startActivity(intent);
             }
@@ -65,6 +66,8 @@ public class JoinGame extends Activity {
 
         BleutoothManager.setSTATE("JOIN");
         BleutoothManager.findDevices();
+
+        GameManager.setHost(false);
 
         showAvailableHosts();
     }

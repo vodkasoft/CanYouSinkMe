@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
+import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 
 public class HostGame extends Activity {
     private Thread Timer;
@@ -36,6 +37,9 @@ public class HostGame extends Activity {
         BleutoothManager.setActivity(this);
         BleutoothManager.setDiscoverable();
         BleutoothManager.startServerConnection(getResources().getString(R.string.app_uuid));
+
+        // Host
+        GameManager.setHost(true);
 
         // Timer
         waitingForPlayer();

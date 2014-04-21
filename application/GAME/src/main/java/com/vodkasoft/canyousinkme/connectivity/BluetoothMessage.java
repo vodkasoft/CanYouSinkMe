@@ -6,13 +6,13 @@ package com.vodkasoft.canyousinkme.connectivity;
  */
 public class BluetoothMessage {
     private String data;
-    private String key;
+    private int key;
 
     public BluetoothMessage(){
         // No args constructor for serialization
     }
 
-    public BluetoothMessage(String key, String data) {
+    public BluetoothMessage(int key, String data) {
         this.data = data;
         this.key = key;
     }
@@ -25,11 +25,11 @@ public class BluetoothMessage {
         this.data = data;
     }
 
-    public String getKey() {
+    public int getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(int key) {
         this.key = key;
     }
 }

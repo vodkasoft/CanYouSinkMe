@@ -1,10 +1,9 @@
 package com.vodkasoft.canyousinkme.gamelogic;
 
-import android.app.Activity;
-import android.os.CountDownTimer;
 import android.widget.TextView;
 
 import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
+import com.vodkasoft.canyousinkme.connectivity.BluetoothMessage;
 import com.vodkasoft.canyousinkme.utils.JsonSerializer;
 
 /**
@@ -14,101 +13,128 @@ import com.vodkasoft.canyousinkme.utils.JsonSerializer;
 public class GameManager {
 
     // Constants
-    private final int BOARD_COLUMNS = 10;
-    private final int BOARD_ROWS = 15;
-    private final int COUNTDOWN_MILLIS = 1000;
-    private final int INITIAL_SCORE = 0;
-    private final int MILLIS_TO_SECONDS = 1000;
-    private final int MOVE_MILLIS = 30000;
-    private final int MISSILE_MESSAGE_KEY = 1;
-    private final int MISSIL_STATE_MESSAGE_KEY = 2;
+    private static final int INITIAL_SCORE = 0;
+    private static int opponentScore = INITIAL_SCORE;
+    private static int playerScore = INITIAL_SCORE;
+    private static final int MISSILE_MESSAGE_KEY = 1;
+    private static final int MISSILE_STATE_MESSAGE_KEY = 2;
+    private static final int MISSILE_SUCCESSFUL_POINTS = 50;
+    private static final int X_COORDINATE = 0;
+    private static final int Y_COORDINATE = 1;
 
-    // Members
-    private BleutoothManager mBleutoothManager;
-    private CountDownTimer missileLaunchTimer;
-    private Player opponent;
-    private DualMatrix opponentBoard;
-    private int opponentScore;
-    private Player player;
-    private DualMatrix playerBoard;
-    private int playerScore;
+    private static boolean host;
+    private static Player opponent = null;
+    private static Player player = null;
+    private static DualMatrix playerBoard = null;
+    private static DualMatrix opponentBoard = new DualMatrix();
 
-    // Timer TextView
-    private TextView textViewMissileLauncher;
+    private static TextView textViewMissileLauncher;
+    private static Integer[] missileCoordinate = new Integer[2];
 
-    public GameManager(Activity pActivity,
-                       TextView textViewMissileLaunchTimer) {
 
-        // Player initialization
-        player = new Player();
-        opponent = new Player();
-
-        // Score initialization
-        playerScore = INITIAL_SCORE;
-        opponentScore = INITIAL_SCORE;
-
-        // Board initialization;
-        playerBoard = new DualMatrix(BOARD_ROWS, BOARD_COLUMNS);
-        opponentBoard = new DualMatrix(BOARD_ROWS, BOARD_COLUMNS);
-
-        setUpMissileLaunchTimer();
-
-    }
-
-    public Player getOpponent() {
+    public static Player getOpponent() {
         return opponent;
     }
 
-    public void setOpponent(Player opponent) {
-        this.opponent = opponent;
+    public static void setOpponent(Player pOpponent) {
+        opponent = pOpponent;
     }
 
-    public int getOpponentScore() {
+    public static int getOpponentScore() {
         return opponentScore;
     }
 
-    public void setOpponentScore(int opponentScore) {
-        this.opponentScore = opponentScore;
+    public static void setOpponentScore(int pOpponentScore) {
+        opponentScore = pOpponentScore;
     }
 
-    public Player getPlayer() {
+    public static Player getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
+    public static void setPlayer(Player pPlayer) {
+        player = pPlayer;
     }
 
-    public int getPlayerScore() {
+    public static DualMatrix getPlayerBoard() {
+        return playerBoard;
+    }
+
+    public static void setPlayerBoard(DualMatrix playerBoard) {
+        GameManager.playerBoard = playerBoard;
+    }
+
+    public static int getPlayerScore() {
         return playerScore;
     }
 
-    public void setPlayerScore(int playerScore) {
-        this.playerScore = playerScore;
+    public static void setPlayerScore(int pPlayerScore) {
+        playerScore = pPlayerScore;
     }
 
-    public void initOpponentBoard() {
+    public static boolean isHost() {
+        return host;
     }
 
-    public void sendMissile(int pX, int pY) {
-        MissileMessage missileMessage = new MissileMessage(pX, pY);
+    public static void setHost(boolean host) {
+        GameManager.host = host;
+    }
+
+    public static void receiveMissile() {
+
+        BluetoothMessage btMessage;
+
+        while (!BleutoothManager.messageQueueIsEmpty()) {
+            btMessage = BleutoothManager.dequeueMessage();
+            if (btMessage.getKey() == MISSILE_MESSAGE_KEY) {
+                MissileMessage mMessage = (MissileMessage) JsonSerializer.fromJsonToObject(btMessage.getData(), MissileMessage.class);
+                if (playerBoard.isShip(mMessage.getxCoordinate(), mMessage.getyCoordinate())) {
+                    BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "true");
+                    playerBoard.putHit(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                } else {
+                    BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "false");
+                    playerBoard.putFail(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                }
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+
+    }
+
+    public static DualMatrix getOpponentBoard() {
+        return opponentBoard;
+    }
+
+    public static void sendMissile() {
+        MissileMessage missileMessage = new MissileMessage(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
         String json = JsonSerializer.fromObjectToJson(missileMessage);
-        mBleutoothManager.sendMessage(MISSILE_MESSAGE_KEY, json);
+        BleutoothManager.sendMessage(MISSILE_MESSAGE_KEY, json);
     }
 
-    public void setUpMissileLaunchTimer() {
-        missileLaunchTimer = new CountDownTimer(MOVE_MILLIS, COUNTDOWN_MILLIS) {
-            @Override
-            public void onTick(long millinsUntilFinished) {
-                textViewMissileLauncher.setText(String.valueOf(millinsUntilFinished / MILLIS_TO_SECONDS));
+    public static void setMissileCoordinate(Integer[] missileCoordinate) {
+        GameManager.missileCoordinate = missileCoordinate;
+    }
+
+    public static void updateMissileResult() {
+        BluetoothMessage btMessage;
+
+        if (!BleutoothManager.messageQueueIsEmpty()) {
+            btMessage = BleutoothManager.dequeueMessage();
+            if (btMessage.getKey() == MISSILE_STATE_MESSAGE_KEY) {
+                if (Boolean.valueOf(btMessage.getData())) {
+                    playerScore += MISSILE_SUCCESSFUL_POINTS;
+                    opponentBoard.putHit(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+                } else {
+                    opponentBoard.putFail(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+                }
             }
 
-            @Override
-            public void onFinish() {
-                textViewMissileLauncher.setText(":(");
-            }
-        }.start();
+        }
+        receiveMissile();
+
     }
+
 
     public void updateOpponentBoard() {
     }

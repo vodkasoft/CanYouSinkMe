@@ -4,17 +4,15 @@ import com.vodkasoft.canyousinkme.game.R;
 
 public class DualMatrix {
 
-    // ROWS x COLUMNS
-    private Integer[][] _LOGIC;
-    private Integer[] _IMGs;
+    private Integer[][] _LOGIC = new Integer[15][10];
 
-    public DualMatrix(int pRows, int pColumns) {
-        initMatrixes(pRows, pColumns);
-    }
+    private Integer[] _IMGs = new Integer[150];
 
-    public void initMatrixes(int pRows, int pColumns){
-        _LOGIC = new Integer[pRows][pColumns];
-        _IMGs = new Integer[pRows * pColumns];
+    private final int EMPTY = 0;
+    private final int HIT = 4;
+    private final int FAIL = 5;
+
+    public DualMatrix() {
         int c = 0;
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 10; j++) {
@@ -22,6 +20,10 @@ public class DualMatrix {
                 _IMGs[c++] = R.drawable.game_v_rect;
             }
         }
+    }
+
+    public boolean isShip(int pX, int pY){
+        return _LOGIC[pX][pY] != EMPTY;
     }
 
     public int getFlatLocation(Integer[] pPair) {
@@ -154,6 +156,17 @@ public class DualMatrix {
             _IMGs[getFlatLocation(pPair)] = R.drawable.shipc_v_3;
         }
     }
+
+    public void putHit(int pX, int pY){
+        _LOGIC[pX][pY] = HIT;
+        _IMGs[getFlatLocation(new Integer[]{pX, pY})] = R.drawable.hit;
+    }
+
+    public void putFail(int pX, int pY){
+        _LOGIC[pX][pY] = FAIL;
+        _IMGs[getFlatLocation(new Integer[]{pX, pY})] = R.drawable.fail;
+    }
+
 
     public void set_IMGs(Integer[] _IMGs) {
         this._IMGs = _IMGs;

@@ -11,32 +11,64 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
-import com.vodkasoft.canyousinkme.connectivity.BluetoothMessage;
+import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
-import com.vodkasoft.canyousinkme.gamelogic.MissileMessage;
-import com.vodkasoft.canyousinkme.utils.JsonSerializer;
 
 public class Gaming extends Activity {
 
-    final int X_COORDINATE = 0;
-    final int Y_COORDINATE = 1;
-
-    DualMatrix DUALMATRIX;
-    Integer[] Pair;
-    GameManager gameManager;
-    private TextView textViewChronometer;
-    private Thread timer;
     Boolean Mine = true; // Which board I'm looking
+    private TextView textViewPlayerScore;
+
+    public void GoToMine() {
+        Mine = true;
+        UpdateMineButtons();
+        drawBoard(GameManager.getPlayerBoard());
+        textViewPlayerScore.setText(String.valueOf(GameManager.getPlayerScore()));
+        waitForEnemyMissile();
+    }
+
+    public void GoToOpponent() {
+        Mine = false;
+        UpdateOpponentButtons();
+        drawBoard(GameManager.getOpponentBoard());
+    }
+
+    public void UpdateMineButtons() {
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(false);
+        Shoot.setImageResource(R.drawable.shoot_btn_disabled);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(true);
+        Opponent.setImageResource(R.drawable.opponent_btn);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(false);
+        Mine.setImageResource(R.drawable.mine_btn_disabled);
+    }
+
+    public void UpdateOpponentButtons() {
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(true);
+        Shoot.setImageResource(R.drawable.shoot_btn);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(false);
+        Opponent.setImageResource(R.drawable.opponent_btn_disabled);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(true);
+        Mine.setImageResource(R.drawable.mine_btn);
+    }
 
     public void createOnClickListener(final GridView pgridView) {
         pgridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Integer[] Pair = getMatrixCoords(i);
-                if(Mine){
+                GameManager.setMissileCoordinate(getMatrixCoords(i));
+                if (Mine) {
 
-                }else{
+                } else {
                     ImageView IV = (ImageView) view;
                     IV.setImageResource(R.drawable.targeted);
                 }
@@ -44,11 +76,10 @@ public class Gaming extends Activity {
         });
     }
 
-    public void drawBoard() {
+    public void drawBoard(DualMatrix board) {
         //Se usa el DUALMATRIX anterior
-        DUALMATRIX = new DualMatrix();
         final GridView gridView = (GridView) findViewById(R.id.container_grid_gaming);
-        final ImageAdapter imageAdapter = new ImageAdapter(Gaming.this, DUALMATRIX.get_IMGs());
+        final ImageAdapter imageAdapter = new ImageAdapter(Gaming.this, board.get_IMGs());
         gridView.setAdapter(imageAdapter);
         createOnClickListener(gridView);
     }
@@ -70,29 +101,19 @@ public class Gaming extends Activity {
         return Par;
     }
 
-    public void sendMissile(){
-        MissileMessage missileMessage = new MissileMessage(Pair[X_COORDINATE], Pair[Y_COORDINATE]);
-        String messageData = JsonSerializer.fromObjectToJson(missileMessage);
-        BleutoothManager.sendMessage(BleutoothManager.MESSAGE_KEY, messageData);
+    public void sendMissile(View view) {
+        GameManager.sendMissile();
+        waitForMissileResult();
+        GoToMine();
     }
 
-    public void waitForMissileResult(){
-        timer = new Thread(new Runnable() {
+    public void waitForEnemyMissile() {
+        Thread waitThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
-                boolean isConnected = false;
-                for (int i=0; i<30; i++){
-                    if (BleutoothManager.isConnectionActive()){
-                        BluetoothMessage btMessage = BleutoothManager.dequeueMessage();
-
-                        // Missile was succesful
-                        if (Boolean.valueOf(btMessage.getData())){
-
-                        } else {
-
-                        }
-                    }
+                for (int i = 30; i > 0; i--) {
+                    GameManager.receiveMissile();
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -101,29 +122,26 @@ public class Gaming extends Activity {
                 }
             }
         });
-        timer.start();
+        waitThread.start();
+
+
     }
 
-    public void waitForEnemyMissile(){
-        timer = new Thread(new Runnable() {
+    public void waitForMissileResult() {
+        Thread waitThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
-                boolean isConnected = false;
-                for (int i = 0; i < 30; i++) {
-                    if (BleutoothManager.isConnectionActive()) {
-                        isConnected = true;
-                        break;
-                    }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                GameManager.updateMissileResult();
+
             }
         });
-        timer.start();
+        waitThread.start();
     }
 
     @Override
@@ -134,48 +152,32 @@ public class Gaming extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_gaming);
 
-        drawBoard();
+        drawBoard(GameManager.getPlayerBoard());
 
         // Init UI variables
-        textViewChronometer = (TextView) findViewById(R.id.textViewChronometer);
+        textViewPlayerScore = (TextView) findViewById(R.id.textViewPlayerScore);
 
-    }
+        ImageButton buttonOpponent = (ImageButton) findViewById(R.id.opponent_btn);
+        ImageButton buttonPlayer = (ImageButton) findViewById(R.id.mine_btn);
 
-    public void GoToOpponent(View view){
-        Mine = false;
-        UpdateOpponentButtons();
-    }
+        buttonOpponent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GoToOpponent();
+            }
+        });
 
-    public void UpdateOpponentButtons(){
-        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
-        Shoot.setEnabled(true);
-        Shoot.setImageResource(R.drawable.shoot_btn);
+        buttonPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GoToMine();
+            }
+        });
 
-        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
-        Opponent.setEnabled(false);
-        Opponent.setImageResource(R.drawable.opponent_btn_disabled);
+        // Host shoots first
+        if (GameManager.isHost()) GoToOpponent();
+        else GoToMine();
 
-        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
-        Mine.setEnabled(true);
-        Mine.setImageResource(R.drawable.mine_btn);
-    }
 
-    public void GoToMine(View view){
-        Mine = true;
-        UpdateMineButtons();
-    }
-
-    public void UpdateMineButtons(){
-        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
-        Shoot.setEnabled(false);
-        Shoot.setImageResource(R.drawable.shoot_btn_disabled);
-
-        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
-        Opponent.setEnabled(true);
-        Opponent.setImageResource(R.drawable.opponent_btn);
-
-        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
-        Mine.setEnabled(false);
-        Mine.setImageResource(R.drawable.mine_btn_disabled);
     }
 }

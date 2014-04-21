@@ -14,11 +14,11 @@
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
-
     <string name="no_bluetooth_available">Bluetooth is not available</string>
     <string name="bluetooth_enabled">Bluetooth is on</string>
     <string name="bluetooth_not_enabled">Bluetooth is off</string>
-
     <string name="app_uuid">f003dcd0-ba28-11e3-a5e2-0800200c9a66</string>
+    <string name="title_activity_g">G</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

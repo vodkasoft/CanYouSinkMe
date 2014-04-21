@@ -34,7 +34,7 @@ public class Main extends Activity {
     //About_btn method
     //This method displays the About activity
     public void GoAbout(View view){
-        Intent intent = new Intent(this, About.class);
+        Intent intent = new Intent(this, Gaming.class);
         startActivity(intent);
         Minimized = false;
     }

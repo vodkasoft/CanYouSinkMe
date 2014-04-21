@@ -45,10 +45,10 @@
             android:background="@null" android:src="@drawable/opponent_btn"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/textViewChronometer"
-        android:layout_alignBottom="@+id/opponent_btn"
-        android:layout_centerHorizontal="true"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/textViewChronometer"
+            android:layout_alignBottom="@+id/opponent_btn"
+            android:layout_centerHorizontal="true"/>
 </RelativeLayout>

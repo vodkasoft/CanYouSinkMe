@@ -22,15 +22,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/MainLogo" android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" android:src="@drawable/main_logo"/>
-    <ImageButton
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Facebook_btn"
-            android:src="@drawable/facebook_log_in_btn"
-            android:clickable="true"
-            android:layout_below="@+id/BlackBarUp" android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"/>
+
+    <com.facebook.widget.LoginButton
+        android:layout_below="@+id/BlackBarUp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/Facebook_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        />
     <ImageButton
             android:onClick="GoHostOrJoin"
             android:background="@null"
@@ -40,4 +40,5 @@
             android:src="@drawable/anonymous_btn"
             android:layout_below="@+id/Facebook_btn" android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"/>
+
 </RelativeLayout>

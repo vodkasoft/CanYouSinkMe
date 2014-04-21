@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class Login extends Activity {
+
+
+public class Login extends FragmentActivity {
     MediaPlayer M;
+    private FacebookAuthFragment authFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +24,19 @@ public class Login extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
+
+        if (savedInstanceState == null) {
+            // Add the fragment on initial activity setup
+            authFragment = new FacebookAuthFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(android.R.id.content, authFragment)
+                    .commit();
+        } else {
+            // Or set the fragment from restored state info
+            authFragment = (FacebookAuthFragment) getSupportFragmentManager()
+                    .findFragmentById(android.R.id.content);
+        }
     }
 
     public void GoHostOrJoin(View view){

@@ -1,16 +1,14 @@
 package com.vodkasoft.canyousinkme.game;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
@@ -29,12 +27,19 @@ public class Gaming extends Activity {
     GameManager gameManager;
     private TextView textViewChronometer;
     private Thread timer;
+    Boolean Mine = true; // Which board I'm looking
 
     public void createOnClickListener(final GridView pgridView) {
         pgridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Pair = getMatrixCoords(i);
+                Integer[] Pair = getMatrixCoords(i);
+                if(Mine){
+
+                }else{
+                    ImageView IV = (ImageView) view;
+                    IV.setImageResource(R.drawable.targeted);
+                }
             }
         });
     }
@@ -105,8 +110,8 @@ public class Gaming extends Activity {
             @Override
             public void run() {
                 boolean isConnected = false;
-                for (int i=0; i<30; i++){
-                    if (BleutoothManager.isConnectionActive()){
+                for (int i = 0; i < 30; i++) {
+                    if (BleutoothManager.isConnectionActive()) {
                         isConnected = true;
                         break;
                     }
@@ -134,27 +139,43 @@ public class Gaming extends Activity {
         // Init UI variables
         textViewChronometer = (TextView) findViewById(R.id.textViewChronometer);
 
-
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.g, menu);
-        return true;
+    public void GoToOpponent(View view){
+        Mine = false;
+        UpdateOpponentButtons();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void UpdateOpponentButtons(){
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(true);
+        Shoot.setImageResource(R.drawable.shoot_btn);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(false);
+        Opponent.setImageResource(R.drawable.opponent_btn_disabled);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(true);
+        Mine.setImageResource(R.drawable.mine_btn);
     }
 
+    public void GoToMine(View view){
+        Mine = true;
+        UpdateMineButtons();
+    }
+
+    public void UpdateMineButtons(){
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(false);
+        Shoot.setImageResource(R.drawable.shoot_btn_disabled);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(true);
+        Opponent.setImageResource(R.drawable.opponent_btn);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(false);
+        Mine.setImageResource(R.drawable.mine_btn_disabled);
+    }
 }

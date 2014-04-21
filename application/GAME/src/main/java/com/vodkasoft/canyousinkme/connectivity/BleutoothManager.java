@@ -27,7 +27,7 @@ import java.util.Set;
 public class BleutoothManager {
 
     private static final int DEFAULT_DISCOVERABLE_DURATION = 300;
-    private static final String MESSAGE_KEY = "CanYouSinkMe?";
+    public static final String MESSAGE_KEY = "CanYouSinkMe?";
     private static final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -261,7 +261,7 @@ public class BleutoothManager {
         else return null;
     }
 
-    public static void sendMessage(int key, String data){
+    public static void sendMessage(String key, String data){
         BluetoothMessage btMessage = new BluetoothMessage(key, data);
         String jsonMessage = JsonSerializer.fromObjectToJson(btMessage);
         mConnectedThread.write(jsonMessage.getBytes());

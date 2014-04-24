@@ -22,6 +22,25 @@ public class GameManager {
     private static final int X_COORDINATE = 0;
     private static final int Y_COORDINATE = 1;
 
+    public static boolean isReceivedMissile() {
+        return receivedMissile;
+    }
+
+    public static void setReceivedMissile(boolean receivedMissile) {
+        GameManager.receivedMissile = receivedMissile;
+    }
+
+    private static boolean receivedMissile = false;
+    private static boolean receivedShotResult = false;
+
+    public static boolean isReceivedShotResult() {
+        return receivedShotResult;
+    }
+
+    public static void setReceivedShotResult(boolean receivedShotResult) {
+        GameManager.receivedShotResult = receivedShotResult;
+    }
+
     private static boolean host;
     private static Player opponent = null;
     private static Player player = null;
@@ -83,7 +102,6 @@ public class GameManager {
     public static void receiveMissile() {
 
         BluetoothMessage btMessage;
-
         while (!BleutoothManager.messageQueueIsEmpty()) {
             btMessage = BleutoothManager.dequeueMessage();
             if (btMessage.getKey() == MISSILE_MESSAGE_KEY) {
@@ -95,7 +113,6 @@ public class GameManager {
                     BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "false");
                     playerBoard.putFail(mMessage.getxCoordinate(), mMessage.getyCoordinate());
                 }
-                Thread.currentThread().interrupt();
                 break;
             }
         }
@@ -119,7 +136,7 @@ public class GameManager {
     public static void updateMissileResult() {
         BluetoothMessage btMessage;
 
-        if (!BleutoothManager.messageQueueIsEmpty()) {
+        while (!BleutoothManager.messageQueueIsEmpty()) {
             btMessage = BleutoothManager.dequeueMessage();
             if (btMessage.getKey() == MISSILE_STATE_MESSAGE_KEY) {
                 if (Boolean.valueOf(btMessage.getData())) {
@@ -128,7 +145,10 @@ public class GameManager {
                 } else {
                     opponentBoard.putFail(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
                 }
+                setReceivedShotResult(true);
+                break;
             }
+            setReceivedShotResult(false);
 
         }
         receiveMissile();

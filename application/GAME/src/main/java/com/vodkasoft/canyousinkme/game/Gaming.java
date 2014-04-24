@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
+import com.vodkasoft.canyousinkme.gamelogic.EnemyMissileTask;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 
 public class Gaming extends Activity {
@@ -24,7 +25,7 @@ public class Gaming extends Activity {
         UpdateMineButtons();
         drawBoard(GameManager.getPlayerBoard());
         textViewPlayerScore.setText(String.valueOf(GameManager.getPlayerScore()));
-        waitForEnemyMissile();
+        //waitForEnemyMissile();
     }
 
     public void GoToOpponent() {
@@ -107,24 +108,10 @@ public class Gaming extends Activity {
         GoToMine();
     }
 
-    public void waitForEnemyMissile() {
-        Thread waitThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                for (int i = 30; i > 0; i--) {
-                    GameManager.receiveMissile();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        waitThread.start();
-
-
+    public void waitForEnemyMissile() throws InterruptedException {
+        EnemyMissileTask task = new EnemyMissileTask();
+        task.execute();
+        task.wait();
     }
 
     public void waitForMissileResult() {
@@ -132,13 +119,7 @@ public class Gaming extends Activity {
 
             @Override
             public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 GameManager.updateMissileResult();
-
             }
         });
         waitThread.start();

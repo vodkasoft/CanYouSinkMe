@@ -1,6 +1,7 @@
 package com.vodkasoft.canyousinkme.game;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -12,16 +13,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
-import com.vodkasoft.canyousinkme.gamelogic.EnemyMissileTask;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
-import com.vodkasoft.canyousinkme.gamelogic.MissileResultTask;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class Gaming extends Activity {
 
     Boolean Mine = true; // Which board I'm looking
     private TextView textViewPlayerScore;
 
-    public void GoToMine() throws InterruptedException {
+    public void GoToMine() throws InterruptedException, TimeoutException, ExecutionException {
         Mine = true;
         UpdateMineButtons();
         drawBoard(GameManager.getPlayerBoard());
@@ -103,23 +105,19 @@ public class Gaming extends Activity {
         return Par;
     }
 
-    public void sendMissile(View view) throws InterruptedException {
+    public void sendMissile(View view) throws InterruptedException, TimeoutException, ExecutionException {
         GameManager.sendMissile();
         waitForMissileResult();
     }
 
-    public void waitForEnemyMissile() throws InterruptedException {
+    public void waitForEnemyMissile() throws InterruptedException, TimeoutException, ExecutionException {
         EnemyMissileTask task = new EnemyMissileTask();
         task.execute();
-        task.wait();
-        GoToOpponent();
     }
 
-    public void waitForMissileResult() throws InterruptedException {
+    public void waitForMissileResult() throws InterruptedException, TimeoutException, ExecutionException {
         MissileResultTask task = new MissileResultTask();
         task.execute();
-        task.wait();
-        GoToMine();
     }
 
     @Override
@@ -150,7 +148,7 @@ public class Gaming extends Activity {
             public void onClick(View view) {
                 try {
                     GoToMine();
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -160,10 +158,59 @@ public class Gaming extends Activity {
         if (GameManager.isHost()) GoToOpponent();
         else try {
             GoToMine();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
+
+    private class EnemyMissileTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        public void onPreExecute(){}
+
+        @Override
+        protected Void doInBackground(Void... params){
+
+            GameManager.receiveMissile();
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void params){
+            GoToOpponent();
+        }
+
+    }
+
+    private class MissileResultTask extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        public void onPreExecute(){}
+
+        @Override
+        protected Void doInBackground(Void... params){
+
+            GameManager.updateMissileResult();
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void params){
+            try {
+                GoToMine();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
+
+

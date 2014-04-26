@@ -64,9 +64,11 @@ public class ConnectedThread extends Thread {
      * Thread loop, keeps connection alive, sends and receives bytes
      */
     public void run() {
-        byte[] buffer = new byte[BUFFER_SIZE];  // buffer store for the stream
+        byte[] buffer;
+
         // Keep listening to the InputStream until an exception occurs
         while (true) {
+            buffer = new byte[BUFFER_SIZE];
             try {
                 // Read from the InputStream
                 mmInStream.read(buffer);

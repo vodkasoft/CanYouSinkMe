@@ -39,7 +39,6 @@ public class BleutoothManager {
                 // Add the name and address to an array adapter to show in a ListView
                 discoverableDevicesName.add(device.getName());
                 discoverableDevicesAddress.add(device.getAddress());
-
             }
         }
     };

@@ -21,6 +21,7 @@ public class GameManager {
     private static final int MISSILE_SUCCESSFUL_POINTS = 50;
     private static final int X_COORDINATE = 0;
     private static final int Y_COORDINATE = 1;
+    private static final int WAIT_TIME = 30;
 
     public static boolean isReceivedMissile() {
         return receivedMissile;
@@ -100,21 +101,30 @@ public class GameManager {
     }
 
     public static void receiveMissile() {
-
+        int timeLeft = WAIT_TIME;
         BluetoothMessage btMessage;
-        while (!BleutoothManager.messageQueueIsEmpty()) {
-            btMessage = BleutoothManager.dequeueMessage();
-            if (btMessage.getKey() == MISSILE_MESSAGE_KEY) {
-                MissileMessage mMessage = (MissileMessage) JsonSerializer.fromJsonToObject(btMessage.getData(), MissileMessage.class);
-                if (playerBoard.isShip(mMessage.getxCoordinate(), mMessage.getyCoordinate())) {
-                    BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "true");
-                    playerBoard.putHit(mMessage.getxCoordinate(), mMessage.getyCoordinate());
-                } else {
-                    BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "false");
-                    playerBoard.putFail(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+
+        while (timeLeft > 0) {
+            if (!BleutoothManager.messageQueueIsEmpty()) {
+                btMessage = BleutoothManager.dequeueMessage();
+                if (btMessage.getKey() == MISSILE_MESSAGE_KEY) {
+                    MissileMessage mMessage = (MissileMessage) JsonSerializer.fromJsonToObject(btMessage.getData(), MissileMessage.class);
+                    if (playerBoard.isShip(mMessage.getxCoordinate(), mMessage.getyCoordinate())) {
+                        BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "true");
+                        playerBoard.putHit(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                    } else {
+                        BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "false");
+                        playerBoard.putFail(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                    }
+                    break;
                 }
-                break;
             }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            timeLeft--;
         }
 
     }
@@ -134,25 +144,30 @@ public class GameManager {
     }
 
     public static void updateMissileResult() {
+        int timeLeft = WAIT_TIME;
         BluetoothMessage btMessage;
 
-        while (!BleutoothManager.messageQueueIsEmpty()) {
-            btMessage = BleutoothManager.dequeueMessage();
-            if (btMessage.getKey() == MISSILE_STATE_MESSAGE_KEY) {
-                if (Boolean.valueOf(btMessage.getData())) {
-                    playerScore += MISSILE_SUCCESSFUL_POINTS;
-                    opponentBoard.putHit(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
-                } else {
-                    opponentBoard.putFail(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+        while (timeLeft > 0) {
+            if (!BleutoothManager.messageQueueIsEmpty()) {
+                btMessage = BleutoothManager.dequeueMessage();
+                if (btMessage.getKey() == MISSILE_STATE_MESSAGE_KEY) {
+                    if (Boolean.valueOf(btMessage.getData())) {
+                        playerScore += MISSILE_SUCCESSFUL_POINTS;
+                        opponentBoard.putHit(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+                    } else {
+                        opponentBoard.putFail(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+                    }
+                    break;
                 }
-                setReceivedShotResult(true);
-                break;
             }
-            setReceivedShotResult(false);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            timeLeft--;
 
         }
-        receiveMissile();
-
     }
 
 

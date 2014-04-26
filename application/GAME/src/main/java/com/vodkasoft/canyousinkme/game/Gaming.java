@@ -14,18 +14,19 @@ import android.widget.TextView;
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
 import com.vodkasoft.canyousinkme.gamelogic.EnemyMissileTask;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
+import com.vodkasoft.canyousinkme.gamelogic.MissileResultTask;
 
 public class Gaming extends Activity {
 
     Boolean Mine = true; // Which board I'm looking
     private TextView textViewPlayerScore;
 
-    public void GoToMine() {
+    public void GoToMine() throws InterruptedException {
         Mine = true;
         UpdateMineButtons();
         drawBoard(GameManager.getPlayerBoard());
         textViewPlayerScore.setText(String.valueOf(GameManager.getPlayerScore()));
-        //waitForEnemyMissile();
+        waitForEnemyMissile();
     }
 
     public void GoToOpponent() {
@@ -102,27 +103,23 @@ public class Gaming extends Activity {
         return Par;
     }
 
-    public void sendMissile(View view) {
+    public void sendMissile(View view) throws InterruptedException {
         GameManager.sendMissile();
         waitForMissileResult();
-        GoToMine();
     }
 
     public void waitForEnemyMissile() throws InterruptedException {
         EnemyMissileTask task = new EnemyMissileTask();
         task.execute();
         task.wait();
+        GoToOpponent();
     }
 
-    public void waitForMissileResult() {
-        Thread waitThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                GameManager.updateMissileResult();
-            }
-        });
-        waitThread.start();
+    public void waitForMissileResult() throws InterruptedException {
+        MissileResultTask task = new MissileResultTask();
+        task.execute();
+        task.wait();
+        GoToMine();
     }
 
     @Override
@@ -151,13 +148,21 @@ public class Gaming extends Activity {
         buttonPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GoToMine();
+                try {
+                    GoToMine();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         // Host shoots first
         if (GameManager.isHost()) GoToOpponent();
-        else GoToMine();
+        else try {
+            GoToMine();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
     }

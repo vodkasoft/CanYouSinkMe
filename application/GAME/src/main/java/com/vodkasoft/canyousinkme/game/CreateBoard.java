@@ -45,7 +45,7 @@ public class CreateBoard extends Activity {
         TextView textView = (TextView) findViewById(R.id.createyourboard_txt);
         textView.setTypeface(typeface);
         textView.setTextSize(20);
-        DUALMATRIX = new DualMatrix();
+        DUALMATRIX = new DualMatrix(false);
         drawBoard();
     }
 

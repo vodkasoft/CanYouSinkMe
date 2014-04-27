@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vodkasoft.canyousinkme.gamelogic.Constant;
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 
@@ -23,12 +24,17 @@ public class Gaming extends Activity {
     Boolean Mine = true; // Which board I'm looking
     private TextView textViewPlayerScore;
 
-    public void GoToMine() throws InterruptedException, TimeoutException, ExecutionException {
-        Mine = true;
+    public void GoToMine(boolean isReceiving) throws InterruptedException, TimeoutException, ExecutionException {
+
         UpdateMineButtons();
         drawBoard(GameManager.getPlayerBoard());
         textViewPlayerScore.setText(String.valueOf(GameManager.getPlayerScore()));
-        waitForEnemyMissile();
+
+        if (isReceiving) {
+            Mine = true;
+            waitForEnemyMissile();
+        }
+
     }
 
     public void GoToOpponent() {
@@ -106,7 +112,7 @@ public class Gaming extends Activity {
     }
 
     public void sendMissile(View view) throws InterruptedException, TimeoutException, ExecutionException {
-        GameManager.sendMissile();
+        GameManager.sendMissile(Constant.BLUETOOTH_MATCH);
         waitForMissileResult();
     }
 
@@ -147,7 +153,7 @@ public class Gaming extends Activity {
             @Override
             public void onClick(View view) {
                 try {
-                    GoToMine();
+                    GoToMine(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -157,7 +163,7 @@ public class Gaming extends Activity {
         // Host shoots first
         if (GameManager.isHost()) GoToOpponent();
         else try {
-            GoToMine();
+            GoToMine(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -168,30 +174,33 @@ public class Gaming extends Activity {
     private class EnemyMissileTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        public void onPreExecute(){}
+        protected Void doInBackground(Void... params) {
 
-        @Override
-        protected Void doInBackground(Void... params){
-
-            GameManager.receiveMissile();
+            GameManager.receiveMissile(Constant.BLUETOOTH_MATCH);
 
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void params){
+        public void onPreExecute() {
+        }
+
+
+        @Override
+        protected void onPostExecute(Void params) {
             GoToOpponent();
         }
 
     }
 
-    private class MissileResultTask extends AsyncTask<Void, Void, Void>{
+    private class MissileResultTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        public void onPreExecute(){}
+        public void onPreExecute() {
+        }
 
         @Override
-        protected Void doInBackground(Void... params){
+        protected Void doInBackground(Void... params) {
 
             GameManager.updateMissileResult();
 
@@ -199,9 +208,9 @@ public class Gaming extends Activity {
         }
 
         @Override
-        protected void onPostExecute(Void params){
+        protected void onPostExecute(Void params) {
             try {
-                GoToMine();
+                GoToMine(true);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {

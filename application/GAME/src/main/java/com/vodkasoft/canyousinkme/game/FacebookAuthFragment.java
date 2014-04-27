@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class FacebookAuthFragment extends Fragment {
 
@@ -33,7 +34,7 @@ public class FacebookAuthFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
             ViewGroup container,
             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_login, container, false);
+        View view = inflater.inflate(R.layout.activity_main, container, false);
         LoginButton authButton = (LoginButton) view.findViewById(R.id.Facebook_btn);
         authButton.setFragment(this);
         return view;
@@ -58,6 +59,12 @@ public class FacebookAuthFragment extends Fragment {
             onSessionStateChange(session, session.getState(), null);
         }
         uiHelper.onResume();
+    }
+
+    public void showToastWithMessage(CharSequence ToastText) {
+        Toast toast = Toast.makeText(getActivity(), ToastText,
+                Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override
@@ -97,10 +104,10 @@ public class FacebookAuthFragment extends Fragment {
                     if (user != null) {
                         String avatar = DEFAULT_AVATAR;
                         String facebookId = user.getId();
-                        String displayname = user.getUsername();
+                        String displayname = user.getName();
                         String countryCode = DEFAULT_COUNTRY_CODE;
-                        // REST call to /users POST
-                        // Next Activity
+                        Intent intent = new Intent(getActivity(), MenuFB.class);
+                        startActivity(intent);
                     }
                 }
             }).executeAsync();

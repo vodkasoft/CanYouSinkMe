@@ -1,56 +1,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.vodkasoft.canyousinkme.game.Main" android:background="#272727">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.vodkasoft.canyousinkme.game.Main" android:background="#00aeff"
+        >
 
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/BlackBarUp" android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" android:src="@drawable/black_bar_up"
-            android:layout_marginLeft="-12dp" android:layout_marginRight="-12dp"
-            android:layout_marginTop="-50dp"/>
+            android:id="@+id/main_main_logo"
+            android:src="@drawable/main_logo" android:adjustViewBounds="false"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"/>
+    <ImageButton
+            android:background="@null"
+            android:onClick="Guest_Event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_guest_btn" android:src="@drawable/guest_btn"
+            android:layout_below="@+id/Facebook_btn" android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"/>
+    <com.facebook.widget.LoginButton
+            android:id="@+id/Facebook_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="Facebook_Event"
+            android:layout_below="@+id/main_main_logo" android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/main_fb_name" android:layout_below="@+id/main_guest_btn"
+            android:layout_centerHorizontal="true" android:layout_marginTop="39dp"/>
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/uss_battleship" android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" android:src="@drawable/uss_battleship"
-            android:layout_marginBottom="-50dp"/>
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/MainLogo" android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" android:src="@drawable/main_logo"/>
-    <ImageButton
-            android:onClick="GoLogin"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Multiplayer_btn" android:layout_below="@+id/BlackBarUp"
-            android:layout_alignParentStart="true" android:src="@drawable/multiplayer_btn"
-            android:layout_marginLeft="-12dp" android:layout_marginTop="-15dp"/>
-    <ImageButton
-            android:onClick="GoLogin"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Singleplayer_btn" android:layout_below="@+id/Multiplayer_btn"
-            android:layout_alignParentEnd="true" android:src="@drawable/singleplayer_btn"
-            android:layout_marginTop="-15dp" android:layout_marginRight="-12dp"/>
-    <ImageButton
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Leaderboards_btn" android:layout_below="@+id/Singleplayer_btn"
-            android:layout_alignParentStart="true" android:layout_marginLeft="-12dp"
-            android:src="@drawable/leaderboards_btn" android:layout_marginTop="-15dp"/>
-    <ImageButton
-            android:onClick="GoAbout"
-            android:background="@null"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/About_btn" android:layout_below="@+id/Leaderboards_btn"
-            android:layout_alignParentEnd="true" android:layout_marginRight="-12dp"
-            android:layout_marginTop="-15dp" android:src="@drawable/about_btn"/>
+            android:id="@+id/main_fb_profilepic" android:layout_alignBottom="@+id/main_fb_name"
+            android:layout_toLeftOf="@+id/main_fb_name"/>
 </RelativeLayout>

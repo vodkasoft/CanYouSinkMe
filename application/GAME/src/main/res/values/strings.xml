@@ -19,7 +19,10 @@
     <string name="bluetooth_not_enabled">Bluetooth is off</string>
     <string name="app_uuid">f003dcd0-ba28-11e3-a5e2-0800200c9a66</string>
     <string name="title_activity_g">G</string>
-    <string name="hello_world">Hello world!</string>
     <string name="app_id">381610585314639</string>
+    <string name="title_activity_menu_fb">MenuFB</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_menu_guest">MenuGuest</string>
+    <string name="title_activity_main_login">MainLogin</string>
 
 </resources>

@@ -2,43 +2,34 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.vodkasoft.canyousinkme.game.HostOrJoin" android:background="#272727">
+                tools:context="com.vodkasoft.canyousinkme.game.HostOrJoin" android:background="#00aeff">
 
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/BlackBarUp" android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" android:src="@drawable/black_bar_up"
-            android:layout_marginLeft="-12dp" android:layout_marginRight="-12dp"
-            android:layout_marginTop="-50dp"/>
+            android:id="@+id/MainLogo" android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" android:src="@drawable/main_logo"
+            android:layout_marginTop="40dp"/>
+
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/uss_battleship" android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" android:src="@drawable/uss_battleship"
             android:layout_marginBottom="-50dp"/>
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/MainLogo" android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" android:src="@drawable/main_logo"/>
     <ImageButton
-            android:background="@null"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/hostgame_btn"
-            android:src="@drawable/hostgame_btn"
-            android:clickable="true"
-            android:layout_below="@+id/BlackBarUp" android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp" android:onClick="GoToHostGame"/>
-
+            android:id="@+id/hostorjoin_hostgame_btn"
+            android:background="@null"
+            android:src="@drawable/hostgame_btn" android:layout_below="@+id/MainLogo"
+            android:layout_alignStart="@+id/hostorjoin_joingame_btn"
+            android:layout_marginTop="40dp" android:onClick="GoToHostGame"/>
     <ImageButton
-            android:onClick="GoToJoinGame"
-            android:background="@null"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/joingame_btn"
-            android:src="@drawable/joingame_btn"
-            android:layout_below="@+id/hostgame_btn" android:layout_alignStart="@+id/hostgame_btn"
-            android:layout_marginTop="20dp"/>
+            android:id="@+id/hostorjoin_joingame_btn" android:layout_below="@+id/hostorjoin_hostgame_btn"
+            android:layout_centerHorizontal="true" android:background="@null"
+            android:src="@drawable/joingame_btn" android:layout_marginTop="20dp"
+            android:onClick="GoToJoinGame"/>
 </RelativeLayout>

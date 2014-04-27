@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.vodkasoft.canyousinkme.game.MenuFB" android:background="#00aeff"
+        >
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_main_logo"
+            android:src="@drawable/main_logo" android:adjustViewBounds="false"
+            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Welcome,"
+            android:id="@+id/menufb_welcome_txt" android:layout_below="@+id/main_main_logo"
+            android:layout_centerHorizontal="true" android:textColor="#ffffffff"
+            android:layout_marginTop="20dp"/>
+</RelativeLayout>

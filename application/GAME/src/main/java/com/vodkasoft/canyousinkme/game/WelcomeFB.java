@@ -4,6 +4,10 @@ import com.facebook.widget.ProfilePictureView;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,8 +50,33 @@ public class WelcomeFB extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void Continue_Event(View view){
+    public void Continue_Event(View view) {
         Intent intent = new Intent(this, MenuFB.class);
         startActivity(intent);
+    }
+
+    public Bitmap getRoundedShape(Bitmap scaleBitmapImage) {
+        // TODO Auto-generated method stub
+        int targetWidth = 50;
+        int targetHeight = 50;
+        Bitmap targetBitmap = Bitmap.createBitmap(targetWidth,
+                targetHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(targetBitmap);
+        Path path = new Path();
+        path.addCircle(((float) targetWidth - 1) / 2,
+                ((float) targetHeight - 1) / 2,
+                (Math.min(((float) targetWidth),
+                        ((float) targetHeight)) / 2),
+                Path.Direction.CCW
+        );
+        canvas.clipPath(path);
+        Bitmap sourceBitmap = scaleBitmapImage;
+        canvas.drawBitmap(sourceBitmap,
+                new Rect(0, 0, sourceBitmap.getWidth(),
+                        sourceBitmap.getHeight()),
+                new Rect(0, 0, targetWidth,
+                        targetHeight), null
+        );
+        return targetBitmap;
     }
 }

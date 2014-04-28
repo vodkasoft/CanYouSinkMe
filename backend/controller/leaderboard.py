@@ -78,7 +78,7 @@ class CountryLeaderboardHandler(_LeaderboardHandler):
             pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
-            :param country_code: code for the country of the leaderboardd
+            :param country_code: code for the country of the leaderboard
 
             Returns:
             :return: an array of users id's

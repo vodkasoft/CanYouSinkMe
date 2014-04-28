@@ -29,71 +29,20 @@ public class Gaming extends Activity implements IConstant {
 
     private TextView textViewPlayerScore;
 
-    public void goToPlayer(boolean isReceiving) throws InterruptedException, TimeoutException, ExecutionException {
-        updateTimer(0);
-        updateMineButtons();
-        if (isReceiving && GameManager.getMatchType() == BLUETOOTH_MATCH) {
-            waitForEnemyMissile();
-        } else {
-            GameManager.receiveMissile();
-            waitForNextMove();
+    /**
+     * Checks if there are still enough ships for playing
+     */
+    public void checkGameState() {
+        if (GameManager.isEndOfGame()) {
+            Intent intent = new Intent(this, MatchSummary.class);
+            startActivity(intent);
         }
-
-        drawBoard(GameManager.getPlayerBoard());
-        textViewPlayerScore.setText(String.valueOf(GameManager.getPlayerScore()));
-
     }
 
-    public void waitForNextMove(){
-        CountDownTimer timer = new CountDownTimer(4000,1000) {
-            @Override
-            public void onTick(long l) {
-                updateTimer((int) l / 1000);
-            }
-
-            @Override
-            public void onFinish() {
-                goToOpponent();
-            }
-        }.start();
-    }
-
-    public void goToOpponent() {
-        updateTimer(0);
-        updateOpponentButtons();
-
-        drawBoard(GameManager.getOpponentBoard());
-
-    }
-
-    public void updateMineButtons() {
-        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
-        Shoot.setEnabled(false);
-        Shoot.setImageResource(R.drawable.shoot_btn_disabled);
-
-        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
-        Opponent.setEnabled(false);
-        Opponent.setImageResource(R.drawable.opponent_btn_disabled);
-
-        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
-        Mine.setEnabled(false);
-        Mine.setImageResource(R.drawable.mine_btn);
-    }
-
-    public void updateOpponentButtons() {
-        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
-        Shoot.setEnabled(true);
-        Shoot.setImageResource(R.drawable.shoot_btn);
-
-        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
-        Opponent.setEnabled(false);
-        Opponent.setImageResource(R.drawable.opponent_btn);
-
-        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
-        Mine.setEnabled(false);
-        Mine.setImageResource(R.drawable.mine_btn_disabled);
-    }
-
+    /**
+     * Gets coordinate from click events over gridview
+     * @param pgridView
+     */
     public void createOnClickListener(final GridView pgridView) {
         pgridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -106,6 +55,10 @@ public class Gaming extends Activity implements IConstant {
         });
     }
 
+    /**
+     * Refreshes gridview board with logical matrixes
+     * @param board
+     */
     public void drawBoard(DualMatrix board) {
         //Se usa el DUALMATRIX anterior
         final GridView gridView = (GridView) findViewById(R.id.container_grid_gaming);
@@ -114,6 +67,11 @@ public class Gaming extends Activity implements IConstant {
         createOnClickListener(gridView);
     }
 
+    /**
+     * Gets coordinate from flat location
+     * @param C
+     * @return
+     */
     public Integer[] getMatrixCoords(int C) {
         Integer[] Par = new Integer[2];
         int k = 0;
@@ -131,38 +89,136 @@ public class Gaming extends Activity implements IConstant {
         return Par;
     }
 
+    /**
+     * Displays shooting board
+     */
+    public void goToOpponent() {
+        updateTimer(0);
+        updateOpponentButtons();
+        drawBoard(GameManager.getOpponentBoard());
+    }
+
+    /**
+     * Displays player ships with current state
+     * @throws InterruptedException
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
+    public void goToPlayer() throws InterruptedException, TimeoutException, ExecutionException {
+        updateTimer(0);
+        updateMineButtons();
+
+        if (GameManager.getMatchType() == BLUETOOTH_MATCH) {
+            waitForEnemyMissile();
+        } else {
+            GameManager.receiveMissile();
+            waitForNextMove();
+        }
+
+        drawBoard(GameManager.getPlayerBoard());
+        textViewPlayerScore.setText(String.valueOf(GameManager.getPlayerScore()));
+
+    }
+
+    /**
+     * Sends missile to opponent board
+     * @param view
+     * @throws InterruptedException
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
     public void sendMissile(View view) throws InterruptedException, TimeoutException, ExecutionException {
         GameManager.sendMissile();
         if (GameManager.getMatchType() == BLUETOOTH_MATCH)
             waitForMissileResult();
         else {
             checkGameState();
-            goToPlayer(false);
+            goToPlayer();
         }
     }
 
-    public void updateTimer(int secondsLeft){
+    /**
+     * Configures player board ui for game events
+     */
+    public void updateMineButtons() {
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(false);
+        Shoot.setImageResource(R.drawable.shoot_btn_disabled);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(false);
+        Opponent.setImageResource(R.drawable.opponent_btn_disabled);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(false);
+        Mine.setImageResource(R.drawable.mine_btn);
+    }
+
+    /**
+     * Configures shooting board ui for game events
+     */
+    public void updateOpponentButtons() {
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(true);
+        Shoot.setImageResource(R.drawable.shoot_btn);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(false);
+        Opponent.setImageResource(R.drawable.opponent_btn);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(false);
+        Mine.setImageResource(R.drawable.mine_btn_disabled);
+    }
+
+    /**
+     * Update timer textview for each move
+     * @param secondsLeft
+     */
+    public void updateTimer(int secondsLeft) {
         TextView textViewTimer = (TextView) findViewById(R.id.textViewChronometer);
         textViewTimer.setText(String.valueOf(secondsLeft));
     }
 
-    public void checkGameState(){
-        if (GameManager.isEndOfGame()) {
-            Intent intent = new Intent(this, MatchSummary.class);
-            startActivity(intent);
-        }
-    }
-
+    /**
+     * Starts missile message listening task
+     * @throws InterruptedException
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
     public void waitForEnemyMissile() throws InterruptedException, TimeoutException, ExecutionException {
         checkGameState();
         EnemyMissileTask task = new EnemyMissileTask();
         task.execute();
     }
 
+    /**
+     * Starts missile result listening task
+     * @throws InterruptedException
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
     public void waitForMissileResult() throws InterruptedException, TimeoutException, ExecutionException {
         checkGameState();
         MissileResultTask task = new MissileResultTask();
         task.execute();
+    }
+
+    /**
+     * Timer for AI battles
+     */
+    public void waitForNextMove() {
+        CountDownTimer timer = new CountDownTimer(4000, 1000) {
+            @Override
+            public void onTick(long l) {
+                updateTimer((int) l / 1000);
+            }
+
+            @Override
+            public void onFinish() {
+                goToOpponent();
+            }
+        }.start();
     }
 
     @Override
@@ -192,22 +248,21 @@ public class Gaming extends Activity implements IConstant {
             @Override
             public void onClick(View view) {
                 try {
-                    goToPlayer(false);
+                    goToPlayer();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        if (GameManager.getMatchType() == LOCAL_MATCH){
+        if (GameManager.getMatchType() == LOCAL_MATCH) {
             GameManager.createCPUplayer();
             goToOpponent();
         } else if (GameManager.isHost() && GameManager.getMatchType() == BLUETOOTH_MATCH) {
             goToOpponent();
-        }
-        else {
+        } else {
             try {
-                goToPlayer(true);
+                goToPlayer();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -254,7 +309,7 @@ public class Gaming extends Activity implements IConstant {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... progress){
+        protected void onProgressUpdate(Integer... progress) {
             updateTimer(progress[0]);
         }
 
@@ -303,14 +358,14 @@ public class Gaming extends Activity implements IConstant {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... progress){
+        protected void onProgressUpdate(Integer... progress) {
             updateTimer(progress[0]);
         }
 
         @Override
         protected void onPostExecute(Void params) {
             try {
-                goToPlayer(true);
+                goToPlayer();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {

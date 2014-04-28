@@ -77,17 +77,6 @@ public class HostGame extends Activity {
         Timer.start();
     }
 
-    private void startBoard(){
-        Intent intent = new Intent(HostGame.this, CreateBoard.class);
-        startActivity(intent);
-    }
-
-    public void showToastWithMessage(CharSequence ToastText){
-        Toast toast = Toast.makeText(HostGame.this, ToastText,
-                Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 

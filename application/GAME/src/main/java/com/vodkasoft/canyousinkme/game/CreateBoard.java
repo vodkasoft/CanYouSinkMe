@@ -13,43 +13,25 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 
 public class CreateBoard extends Activity {
 
     final int SHIPA_SIZE = 4;
-
     final int SHIPB_SIZE = 4;
-
     final int SHIPC_SIZE = 3;
-
     DualMatrix DUALMATRIX;
-
     boolean SHIPA_LOCATED = false;
-
     boolean SHIPB_LOCATED = false;
-
     boolean SHIPC_LOCATED = false;
-
     int Ship = 0;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_create_board);
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "JustAnotherHand.ttf");
-        TextView textView = (TextView) findViewById(R.id.createyourboard_txt);
-        textView.setTypeface(typeface);
-        textView.setTextSize(20);
-        GameManager.resetMatchData();
-        DUALMATRIX = new DualMatrix(false);
-        drawBoard();
-    }
-
+    /**
+     * Starts main gaming activity
+     * @param view
+     */
     public void GoToWaiting(View view) {
         if (SHIPA_LOCATED && SHIPB_LOCATED && SHIPC_LOCATED) {
             GameManager.setPlayerBoard(DUALMATRIX);
@@ -57,25 +39,16 @@ public class CreateBoard extends Activity {
             showToastWithMessage(CS);
             Intent intent = new Intent(this, Gaming.class);
             startActivity(intent);
-        }else{
+        } else {
             CharSequence CS = "There are ships left to be placed";
             showToastWithMessage(CS);
         }
     }
 
-    public void showToastWithMessage(CharSequence ToastText){
-        Toast toast = Toast.makeText(CreateBoard.this, ToastText,
-                Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-    public void drawBoard() {
-        final GridView gridView = (GridView) findViewById(R.id.container_grid);
-        final ImageAdapter imageAdapter = new ImageAdapter(CreateBoard.this, DUALMATRIX.get_IMGs());
-        gridView.setAdapter(imageAdapter);
-        createOnClickListener(gridView);
-    }
-
+    /**
+     * Detects click coordinate on board grid
+     * @param pgridView
+     */
     public void createOnClickListener(final GridView pgridView) {
         pgridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -137,6 +110,119 @@ public class CreateBoard extends Activity {
         });
     }
 
+    /**
+     * Updates board using DUALMATRIX member
+     */
+    public void drawBoard() {
+        final GridView gridView = (GridView) findViewById(R.id.container_grid);
+        final ImageAdapter imageAdapter = new ImageAdapter(CreateBoard.this, DUALMATRIX.get_IMGs());
+        gridView.setAdapter(imageAdapter);
+        createOnClickListener(gridView);
+    }
+
+    /**
+     * Gets matrix coordinates from flat location
+     * @param C
+     * @return
+     */
+    public Integer[] getMatrixCoords(int C) {
+        Integer[] Par = new Integer[2];
+        int k = 0;
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (k == C) {
+                    Par[0] = i;
+                    Par[1] = j;
+                    return Par;
+                } else {
+                    k++;
+                }
+            }
+        }
+        return Par;
+    }
+
+    /**
+     * Check if ship locations is out of bounds
+     * @param Pair
+     * @param Orientation
+     * @return
+     */
+    public boolean isACorrectPosition(Integer[] Pair, boolean Orientation) {
+        switch (Ship) {
+            case 1:
+                if (Orientation) {
+                    if (Pair[1] > 6) {
+                        return false;
+                    }
+                } else {
+                    if (Pair[0] > 11) {
+                        return false;
+                    }
+                }
+                break;
+            case 2:
+                if (Orientation) {
+                    if (Pair[1] > 6) {
+                        return false;
+                    }
+                } else {
+                    if (Pair[0] > 11) {
+                        return false;
+                    }
+                }
+            case 3:
+                if (Orientation) {
+                    if (Pair[1] > 7) {
+                        return false;
+                    }
+                } else {
+                    if (Pair[0] > 12) {
+                        return false;
+                    }
+                }
+        }
+        return true;
+    }
+
+    /**
+     * Puts ship A on board
+     * @param view
+     */
+    public void putShipA(View view) {
+        Ship = 1;
+    }
+
+    /**
+     * Puts ship B on board
+     * @param view
+     */
+    public void putShipB(View view) {
+        Ship = 2;
+    }
+
+    /**
+     * Puts ship C on board
+     * @param view
+     */
+    public void putShipC(View view) {
+        Ship = 3;
+    }
+
+    /**
+     * Utility for showing toast messages
+     * @param ToastText
+     */
+    public void showToastWithMessage(CharSequence ToastText) {
+        Toast toast = Toast.makeText(CreateBoard.this, ToastText,
+                Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    /**
+     * Updates grid adapter to refresh content
+     * @param gridView
+     */
     public void updateAdapterAndLogic(GridView gridView) {
         ImageAdapter IA = new ImageAdapter(CreateBoard.this,
                 DUALMATRIX.get_IMGs());
@@ -175,69 +261,19 @@ public class CreateBoard extends Activity {
         }
     }
 
-    public boolean isACorrectPosition(Integer[] Pair, boolean Orientation) {
-        switch (Ship) {
-            case 1:
-                if (Orientation) {
-                    if (Pair[1] > 6) {
-                        return false;
-                    }
-                } else {
-                    if (Pair[0] > 11) {
-                        return false;
-                    }
-                }
-                break;
-            case 2:
-                if (Orientation) {
-                    if (Pair[1] > 6) {
-                        return false;
-                    }
-                } else {
-                    if (Pair[0] > 11) {
-                        return false;
-                    }
-                }
-            case 3:
-                if (Orientation) {
-                    if (Pair[1] > 7) {
-                        return false;
-                    }
-                } else {
-                    if (Pair[0] > 12) {
-                        return false;
-                    }
-                }
-        }
-        return true;
-    }
-
-    public Integer[] getMatrixCoords(int C) {
-        Integer[] Par = new Integer[2];
-        int k = 0;
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (k == C) {
-                    Par[0] = i;
-                    Par[1] = j;
-                    return Par;
-                } else {
-                    k++;
-                }
-            }
-        }
-        return Par;
-    }
-
-    public void putShipA(View view) {
-        Ship = 1;
-    }
-
-    public void putShipB(View view) {
-        Ship = 2;
-    }
-
-    public void putShipC(View view) {
-        Ship = 3;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_create_board);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "JustAnotherHand.ttf");
+        TextView textView = (TextView) findViewById(R.id.createyourboard_txt);
+        textView.setTypeface(typeface);
+        textView.setTextSize(20);
+        GameManager.resetMatchData();
+        DUALMATRIX = new DualMatrix(false);
+        drawBoard();
     }
 }

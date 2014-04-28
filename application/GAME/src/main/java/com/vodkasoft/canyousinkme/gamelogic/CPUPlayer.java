@@ -7,12 +7,8 @@ import java.util.Random;
  * Vodkasoft (R)
  * Created by jomarin on 4/26/14.
  */
-public class CPUPlayer implements IConstant{
+public class CPUPlayer implements IConstant {
 
-
-    public DualMatrix getBoard() {
-        return board;
-    }
 
     private DualMatrix board;
     private Integer[] lastHitPosition;
@@ -21,6 +17,9 @@ public class CPUPlayer implements IConstant{
     private Random randomGenerator;
     private LinkedList<Integer> usedPositions;
 
+    /**
+     * Constructs new CPUPlayer, randomly puts ships on board
+     */
     public CPUPlayer() {
         board = new DualMatrix(true);
         randomGenerator = new Random();
@@ -29,12 +28,28 @@ public class CPUPlayer implements IConstant{
         lastPositionWasHit = false;
     }
 
+    /**
+     * Returns board
+     * @return DualMatrix cpuplayer board
+     */
+    public DualMatrix getBoard() {
+        return board;
+    }
+
+    /**
+     * Returns a random generated point
+     * @return Point (x,y)
+     */
     public Integer[] getPosition() {
         int x = randomGenerator.nextInt(ROWS);
         int y = randomGenerator.nextInt(COLUMNS);
         return new Integer[]{x, y};
     }
 
+    /**
+     * Randomly generates a new missile position for cpu send missile turn
+     * @return Point (x,y)
+     */
     public Integer[] nextMissilePosition() {
         Integer[] position;
 
@@ -54,21 +69,18 @@ public class CPUPlayer implements IConstant{
         return position;
     }
 
-    private boolean isInBound(Integer[] pPosition){
-        return pPosition[X_COORDINATE] < ROWS &&
-               pPosition[X_COORDINATE] > -1 &&
-               pPosition[Y_COORDINATE] < COLUMNS &&
-               pPosition[Y_COORDINATE] > -1 ?
-               true : false;
-    }
-
+    /**
+     * When CPU hits a ship, it surrounds the hit position clockwise until he gets a new hit
+     * position
+     * @return Point (x,y)
+     */
     private Integer[] getSurroundingPosition() {
         Integer[] position = lastHitPosition;
 
         switch (++lastSurroundingPositionCode) {
             case NORTH:
                 position[Y_COORDINATE]--;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
@@ -76,14 +88,14 @@ public class CPUPlayer implements IConstant{
             case NORTHEAST:
                 position[X_COORDINATE]++;
                 position[Y_COORDINATE]--;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
             case EAST:
                 position[X_COORDINATE]++;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
@@ -91,14 +103,14 @@ public class CPUPlayer implements IConstant{
             case SOUTHEAST:
                 position[X_COORDINATE]++;
                 position[Y_COORDINATE]++;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
             case SOUTH:
                 position[Y_COORDINATE]++;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
@@ -106,14 +118,14 @@ public class CPUPlayer implements IConstant{
             case SOUTHWEST:
                 position[X_COORDINATE]--;
                 position[Y_COORDINATE]++;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
             case WEST:
                 position[X_COORDINATE]--;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
@@ -121,17 +133,30 @@ public class CPUPlayer implements IConstant{
             case NORTHWEST:
                 position[X_COORDINATE]--;
                 position[Y_COORDINATE]--;
-                if (isInBound(position)){
+                if (isInBound(position)) {
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            default :
+            default:
                 lastSurroundingPositionCode = 0;
-                return  getPosition();
+                return getPosition();
 
         }
 
+    }
+
+    /**
+     * Checks surrounding position isn't out of board bounds
+     * @param pPosition
+     * @return
+     */
+    private boolean isInBound(Integer[] pPosition) {
+        return pPosition[X_COORDINATE] < ROWS &&
+                pPosition[X_COORDINATE] > -1 &&
+                pPosition[Y_COORDINATE] < COLUMNS &&
+                pPosition[Y_COORDINATE] > -1 ?
+                true : false;
     }
 
 

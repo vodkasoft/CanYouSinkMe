@@ -4,12 +4,16 @@ import com.vodkasoft.canyousinkme.game.R;
 
 import java.util.Random;
 
-public class DualMatrix implements IConstant{
+public class DualMatrix implements IConstant {
 
     private final Random randomGenerator = new Random();
     private Integer[] _IMGs = new Integer[ROWS * COLUMNS];
     private Integer[][] _LOGIC = new Integer[ROWS][COLUMNS];
 
+    /**
+     * Creates a new matrix instance, if it is AI, it automatically puts ships on board
+     * @param isArtificialIntelligence
+     */
     public DualMatrix(boolean isArtificialIntelligence) {
         int c = 0;
         for (int i = 0; i < ROWS; i++) {
@@ -24,6 +28,11 @@ public class DualMatrix implements IConstant{
         }
     }
 
+    /**
+     * Gets specific point location in flat IMG matrix
+     * @param pPair
+     * @return
+     */
     public int getFlatLocation(Integer[] pPair) {
         int c = 0;
         for (int i = 0; i < ROWS; i++) {
@@ -38,12 +47,21 @@ public class DualMatrix implements IConstant{
         return 150;
     }
 
+    /**
+     * Randomly generates a new position for ships to be put on
+     * @return Point(x,y)
+     */
     public Integer[] getPosition() {
         int x = randomGenerator.nextInt(ROWS);
         int y = randomGenerator.nextInt(COLUMNS);
         return new Integer[]{x, y};
     }
 
+    /**
+     * Gets ship size from shipcode
+     * @param pShipCode
+     * @return ships integer size
+     */
     public int getShipSize(int pShipCode) {
         switch (pShipCode) {
             case 1:
@@ -57,22 +75,21 @@ public class DualMatrix implements IConstant{
         }
     }
 
+    /**
+     * Gets IMGs matrix
+     * @return
+     */
     public Integer[] get_IMGs() {
         return _IMGs;
     }
 
-    public void set_IMGs(Integer[] _IMGs) {
-        this._IMGs = _IMGs;
-    }
-
-    public Integer[][] get_LOGIC() {
-        return _LOGIC;
-    }
-
-    public void set_LOGIC(Integer[][] _LOGIC) {
-        this._LOGIC = _LOGIC;
-    }
-
+    /**
+     * Checks if the position of the ship to be put interfers with another one or is out of bounds.
+     * @param pPair
+     * @param isVertical
+     * @param pLenght
+     * @return
+     */
     public boolean isInterfering(Integer[] pPair, boolean isVertical, int pLenght) {
         int row = pPair[0];
         int column = pPair[1];
@@ -101,20 +118,42 @@ public class DualMatrix implements IConstant{
         return false;
     }
 
+    /**
+     * Checks if given position has a ship
+     * @param pX x coordinate
+     * @param pY y coordinate
+     * @return
+     */
     public boolean isShip(int pX, int pY) {
         return _LOGIC[pX][pY] != EMPTY;
     }
 
+    /**
+     * Puts a fail image on board
+     * @param pX x coordinate
+     * @param pY y coordinate
+     */
     public void putFail(int pX, int pY) {
         _LOGIC[pX][pY] = FAIL;
         _IMGs[getFlatLocation(new Integer[]{pX, pY})] = R.drawable.fail;
     }
 
+    /**
+     * Puts a hit image on board
+     * @param pX x coordinate
+     * @param pY y coordinate
+     */
     public void putHit(int pX, int pY) {
         _LOGIC[pX][pY] = HIT;
         _IMGs[getFlatLocation(new Integer[]{pX, pY})] = R.drawable.hit;
     }
 
+    /**
+     * Puts a ship on board
+     * @param pShipCode ship id
+     * @param pPair ship position
+     * @param isVertical ship orientation
+     */
     public void putShip(int pShipCode, Integer[] pPair, boolean isVertical) {
         int X = pPair[0];
         int Y = pPair[1];
@@ -131,6 +170,9 @@ public class DualMatrix implements IConstant{
         }
     }
 
+    /**
+     * Fills CPU board with ships
+     */
     public void putShips() {
         Integer[] position;
         boolean isVertical;
@@ -147,6 +189,13 @@ public class DualMatrix implements IConstant{
         }
     }
 
+    /**
+     * Puts ship A depending on position and orientation
+     * @param pX x coordinate
+     * @param pY y coordinate
+     * @param isVertical ship orientation
+     * @param pPair position
+     */
     private void putShipA(int pX, int pY, boolean isVertical, Integer[] pPair) {
         if (isVertical) {
             _LOGIC[pX][pY] = 1;
@@ -175,6 +224,13 @@ public class DualMatrix implements IConstant{
         }
     }
 
+    /**
+     * Puts ship B depending on position and orientation
+     * @param pX x coordinate
+     * @param pY y coordinate
+     * @param isVertical ship orientation
+     * @param pPair position
+     */
     private void putShipB(int pX, int pY, boolean isVertical, Integer[] pPair) {
         if (isVertical) {
             _LOGIC[pX][pY] = 2;
@@ -203,6 +259,13 @@ public class DualMatrix implements IConstant{
         }
     }
 
+    /**
+     * Puts ship C depending on position and orientation
+     * @param pX x coordinate
+     * @param pY y coordinate
+     * @param isVertical ship orientation
+     * @param pPair position
+     */
     private void putShipC(int pX, int pY, boolean isVertical, Integer[] pPair) {
         if (isVertical) {
             _LOGIC[pX][pY] = 3;

@@ -14,105 +14,116 @@ public class GameManager implements IConstant {
     private static boolean host;
     private static int matchType;
     private static Integer[] missileCoordinate = new Integer[2];
-    private static Player opponent = null;
     private static DualMatrix opponentBoard;
     private static int opponentHitCount;
-    private static int opponentScore = INITIAL_SCORE;
-    private static Player player = null;
     private static DualMatrix playerBoard = null;
     private static int playerHitCount;
     private static int playerScore = INITIAL_SCORE;
-    private static boolean receivedMissile = false;
-    private static boolean receivedShotResult = false;
 
+    /**
+     * Increments opponent's hits
+     */
     public static void addOpponentHit() {
         opponentHitCount++;
     }
 
+    /**
+     * Increments player's hits
+     */
     public static void addPlayerHit() {
         playerHitCount++;
     }
 
+    /**
+     * Adds points to player score
+     */
     public static void addPlayerPoints() {
         playerScore += MISSILE_SUCCESSFUL_POINTS;
     }
 
+    /**
+     * Initializes a new AI
+     */
     public static void createCPUplayer() {
         cpuPlayer = new CPUPlayer();
     }
 
+    /**
+     * Gets currents battle conditions (win/loose)
+     * @return
+     */
     public static String getCondition() {
         return condition;
     }
 
-    public static CPUPlayer getCpuPlayer() {
-        return cpuPlayer;
-    }
-
-    public static void setCpuPlayer(CPUPlayer cpuPlayer) {
-        GameManager.cpuPlayer = cpuPlayer;
-    }
-
+    /**
+     * Gets current battle type, bt or local
+     * @return
+     */
     public static int getMatchType() {
         return matchType;
     }
 
+    /**
+     * Sets matchtype
+     * @param matchType
+     */
     public static void setMatchType(int matchType) {
         GameManager.matchType = matchType;
     }
 
+    /**
+     * Gets coordinate from click event listener
+     * @return
+     */
     public static Integer[] getMissileCoordinate() {
         return missileCoordinate;
     }
 
+    /**
+     * Sets send missile coordinate from click listener
+     * @param missileCoordinate point(x,y)
+     */
     public static void setMissileCoordinate(Integer[] missileCoordinate) {
         GameManager.missileCoordinate = missileCoordinate;
     }
 
-    public static Player getOpponent() {
-        return opponent;
-    }
-
-    public static void setOpponent(Player pOpponent) {
-        opponent = pOpponent;
-    }
-
+    /**
+     * Gets opponent logic board
+     * @return
+     */
     public static DualMatrix getOpponentBoard() {
         return opponentBoard;
     }
 
-    public static int getOpponentScore() {
-        return opponentScore;
-    }
-
-    public static void setOpponentScore(int pOpponentScore) {
-        opponentScore = pOpponentScore;
-    }
-
-    public static Player getPlayer() {
-        return player;
-    }
-
-    public static void setPlayer(Player pPlayer) {
-        player = pPlayer;
-    }
-
+    /**
+     * Gets player logic board
+     * @return
+     */
     public static DualMatrix getPlayerBoard() {
         return playerBoard;
     }
 
+    /**
+     * Sets player board from createboard activity
+     * @param playerBoard
+     */
     public static void setPlayerBoard(DualMatrix playerBoard) {
         GameManager.playerBoard = playerBoard;
     }
 
+    /**
+     * Gets player current match score
+     * @return
+     */
     public static int getPlayerScore() {
         return playerScore;
     }
 
-    public static void setPlayerScore(int pPlayerScore) {
-        playerScore = pPlayerScore;
-    }
-
+    /**
+     * Checks if there are still ships available for playing
+     * @return
+     */
     public static boolean isEndOfGame() {
         if (playerHitCount == SHIPA_SIZE + SHIPB_SIZE + SHIPC_SIZE) {
             condition = WINNER_CONDITION;
@@ -127,28 +138,20 @@ public class GameManager implements IConstant {
 
     }
 
+    /**
+     * Checks which player is host
+     * @return
+     */
     public static boolean isHost() {
         return host;
     }
 
+    /**
+     * Sets new host from host activity
+     * @param host
+     */
     public static void setHost(boolean host) {
         GameManager.host = host;
-    }
-
-    public static boolean isReceivedMissile() {
-        return receivedMissile;
-    }
-
-    public static void setReceivedMissile(boolean receivedMissile) {
-        GameManager.receivedMissile = receivedMissile;
-    }
-
-    public static boolean isReceivedShotResult() {
-        return receivedShotResult;
-    }
-
-    public static void setReceivedShotResult(boolean receivedShotResult) {
-        GameManager.receivedShotResult = receivedShotResult;
     }
 
     public static void receiveMissile() {
@@ -164,10 +167,11 @@ public class GameManager implements IConstant {
 
     }
 
+    /**
+     * Resets static members necessary for new match
+     */
     public static void resetMatchData() {
-        opponent = null;
         opponentBoard = new DualMatrix(false);
-        opponentScore = INITIAL_SCORE;
         playerBoard = null;
         playerScore = INITIAL_SCORE;
         playerHitCount = 0;
@@ -175,6 +179,9 @@ public class GameManager implements IConstant {
         condition = "";
     }
 
+    /**
+     * Sends missile to opponents board
+     */
     public static void sendMissile() {
 
         switch (matchType) {
@@ -188,6 +195,9 @@ public class GameManager implements IConstant {
 
     }
 
+    /**
+     * Simulates AI missile reception
+     */
     private static void receiveLocalMissile() {
 
         Integer[] missilePosition = cpuPlayer.nextMissilePosition();
@@ -199,12 +209,18 @@ public class GameManager implements IConstant {
 
     }
 
+    /**
+     * Sends missile via BluetoothMessage
+     */
     private static void sendBluetoothMissile() {
         MissileMessage missileMessage = new MissileMessage(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
         String json = JsonSerializer.fromObjectToJson(missileMessage);
         BleutoothManager.sendMessage(MISSILE_MESSAGE_KEY, json);
     }
 
+    /**
+     * Sends missile to AI board
+     */
     private static void sendLocalMissile() {
         if (cpuPlayer.getBoard().isShip(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE])) {
             opponentBoard.putHit(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);

@@ -30,6 +30,10 @@ public class User {
     @SerializedName("countryCode")
     private String mCountryCode = DEFAULT_COUNTRY_CODE;
 
+    public String getmId() {
+        return mId;
+    }
+
     /** The id of the user */
     @SerializedName("id")
     private final String mId;

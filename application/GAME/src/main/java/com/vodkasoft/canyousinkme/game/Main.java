@@ -80,7 +80,6 @@ public class Main extends FragmentActivity {
     }
 
     public void Facebook_Event(View view){
-        Intent intent = new Intent(this, MenuFB.class);
-        startActivity(intent);
+
     }
 }

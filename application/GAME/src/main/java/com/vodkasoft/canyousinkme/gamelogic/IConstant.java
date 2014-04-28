@@ -43,4 +43,10 @@ public interface IConstant {
     public static final String WINNER_CONDITION = "WINNER";
     public static final String LOOSER_CONDITION = "LOOSER";
 
+    public static final String BACKEND_HOST = "http://192.168.1.101:8080";
+
+    public static final String USER_ERROR = "Create user request couldn't be completed :'(";
+    public static final String LEADERBOARD_ERROR = "Get leaderboard request couldn't be completed :'(";
+
+
 }

@@ -6,8 +6,50 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
-public class Leaderboards extends Activity {
+import com.vodkasoft.canyousinkme.dataaccess.BackendServiceAccessor;
+import com.vodkasoft.canyousinkme.dataaccess.model.User;
+import com.vodkasoft.canyousinkme.gamelogic.IConstant;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Leaderboards extends Activity implements IConstant{
+
+    private void loadLeaderboard(){
+
+        BackendServiceAccessor backendServiceAccessor = new BackendServiceAccessor(BACKEND_HOST, this);
+
+        backendServiceAccessor.getGlobalLeaderboards(new BackendServiceAccessor.Listener<List<User>>() {
+            @Override
+            public void onError(String message) {
+                Toast toast = Toast.makeText(getApplicationContext(), LEADERBOARD_ERROR, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+
+            @Override
+            public void onResponse(List<User> response) {
+                List<String> idList = new ArrayList<String>(response.size());
+
+                for(User user : response){
+                    idList.add(user.getmId());
+                }
+
+                ArrayAdapter listAdapterLeaderboard =
+                        new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, idList);
+
+                ListView listViewLeaderboard = (ListView) findViewById(R.id.listViewLeaderboard);
+
+                listViewLeaderboard.setAdapter(listAdapterLeaderboard);
+
+            }
+        });
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +58,8 @@ public class Leaderboards extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_leaderboards);
+        loadLeaderboard();
+
     }
 
 

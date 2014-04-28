@@ -20,15 +20,12 @@
             android:id="@+id/textView" android:layout_below="@+id/main_main_logo"
             android:layout_centerHorizontal="true" android:textColor="#FFFFFF"
             android:layout_marginTop="20dp"/>
-    <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/leaderboards_scrollview" android:layout_below="@+id/textView"
-            android:layout_centerHorizontal="true" android:layout_marginTop="30dp">
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" android:id="@+id/leaderboards_horizontalview">
-        </LinearLayout>
-    </ScrollView>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listViewLeaderboard"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"/>
 </RelativeLayout>

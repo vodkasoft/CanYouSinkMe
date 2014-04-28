@@ -2,47 +2,72 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.vodkasoft.canyousinkme.game.MenuFB" android:background="#2e2e2e"
-        >
+                android:background="#2e2e2e"
+                tools:context="com.vodkasoft.canyousinkme.game.MenuFB"
+    >
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/main_main_logo"
-            android:src="@drawable/main_logo" android:adjustViewBounds="false"
-            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"/>
+        android:id="@+id/main_main_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:adjustViewBounds="false"
+        android:src="@drawable/main_logo"/>
+
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Welcome,"
-            android:id="@+id/menufb_welcome_txt"
-            android:textColor="#ffffffff"
-            android:layout_below="@+id/main_main_logo" android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"/>
+        android:id="@+id/menufb_welcome_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_main_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Welcome,"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ffffffff"/>
+
     <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/menuguest_multiplayer_btn"
-            android:src="@drawable/multiplayer_btn"
-            android:background="@null"
-            android:onClick="GoToHostOrJoin"
-            android:layout_below="@+id/menufb_welcome_txt" android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"/>
-    <ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                 android:id="@+id/menuguest_singleplayer_btn"
-                 android:src="@drawable/singleplayer_btn"
-                 android:background="@null" android:layout_below="@+id/menuguest_multiplayer_btn"
-                 android:layout_centerHorizontal="true" android:layout_marginTop="10dp"/>
-    <ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                 android:id="@+id/menuguest_leaderboards_btn" android:src="@drawable/leaderboards_btn"
-                 android:background="@null"
-                 android:layout_below="@+id/menuguest_singleplayer_btn" android:layout_centerHorizontal="true"
-                 android:layout_marginTop="10dp" android:onClick="Leaderboards_Event"/>
-    <ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content"
-                 android:id="@+id/menuguest_about_btn" android:src="@drawable/about_btn"
-                 android:background="@null"
-                 android:layout_below="@+id/menuguest_leaderboards_btn" android:layout_centerHorizontal="true"
-                 android:layout_marginTop="10dp" android:onClick="About_Event"/>
+        android:id="@+id/menuguest_multiplayer_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/menufb_welcome_txt"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:onClick="GoToHostOrJoin"
+        android:src="@drawable/multiplayer_btn"/>
+
+    <ImageButton
+        android:id="@+id/menuguest_singleplayer_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/menuguest_multiplayer_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:onClick="goToCreateBoard"
+        android:src="@drawable/singleplayer_btn"/>
+
+    <ImageButton
+        android:id="@+id/menuguest_leaderboards_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/menuguest_singleplayer_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:onClick="Leaderboards_Event"
+        android:src="@drawable/leaderboards_btn"/>
+
+    <ImageButton
+        android:id="@+id/menuguest_about_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/menuguest_leaderboards_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:onClick="About_Event"
+        android:src="@drawable/about_btn"/>
 </RelativeLayout>

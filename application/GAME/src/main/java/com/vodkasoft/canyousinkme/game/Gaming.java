@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,12 +30,13 @@ public class Gaming extends Activity implements IConstant {
     private TextView textViewPlayerScore;
 
     public void goToPlayer(boolean isReceiving) throws InterruptedException, TimeoutException, ExecutionException {
-
+        updateTimer(0);
         updateMineButtons();
         if (isReceiving && GameManager.getMatchType() == BLUETOOTH_MATCH) {
             waitForEnemyMissile();
         } else {
             GameManager.receiveMissile();
+            waitForNextMove();
         }
 
         drawBoard(GameManager.getPlayerBoard());
@@ -42,8 +44,22 @@ public class Gaming extends Activity implements IConstant {
 
     }
 
-    public void goToOpponent() throws InterruptedException, ExecutionException, TimeoutException {
+    public void waitForNextMove(){
+        CountDownTimer timer = new CountDownTimer(4000,1000) {
+            @Override
+            public void onTick(long l) {
+                updateTimer((int) l / 1000);
+            }
 
+            @Override
+            public void onFinish() {
+                goToOpponent();
+            }
+        }.start();
+    }
+
+    public void goToOpponent() {
+        updateTimer(0);
         updateOpponentButtons();
 
         drawBoard(GameManager.getOpponentBoard());
@@ -168,15 +184,7 @@ public class Gaming extends Activity implements IConstant {
         buttonOpponent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    goToOpponent();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (TimeoutException e) {
-                    e.printStackTrace();
-                }
+                goToOpponent();
             }
         });
 
@@ -193,25 +201,10 @@ public class Gaming extends Activity implements IConstant {
 
         if (GameManager.getMatchType() == LOCAL_MATCH){
             GameManager.createCPUplayer();
-            try {
-                goToOpponent();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            }
-        } else if (GameManager.isHost() && GameManager.getMatchType() == BLUETOOTH_MATCH)
-            try {
-                goToOpponent();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            }
+            goToOpponent();
+        } else if (GameManager.isHost() && GameManager.getMatchType() == BLUETOOTH_MATCH) {
+            goToOpponent();
+        }
         else {
             try {
                 goToPlayer(true);
@@ -267,15 +260,7 @@ public class Gaming extends Activity implements IConstant {
 
         @Override
         protected void onPostExecute(Void params) {
-            try {
-                goToOpponent();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            }
+            goToOpponent();
         }
 
     }

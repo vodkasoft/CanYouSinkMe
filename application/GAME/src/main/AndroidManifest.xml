@@ -88,6 +88,10 @@
             android:name="com.vodkasoft.canyousinkme.game.WelcomeFB"
             android:label="@string/title_activity_welcome_fb" >
         </activity>
+        <activity
+            android:name="com.vodkasoft.canyousinkme.game.MatchSummary"
+            android:label="@string/title_activity_match_summary" >
+        </activity>
     </application>
 
 </manifest>

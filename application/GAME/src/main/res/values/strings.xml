@@ -26,5 +26,6 @@
     <string name="title_activity_main_login">MainLogin</string>
     <string name="title_activity_leaderboards">Leaderboards</string>
     <string name="title_activity_welcome_fb">WelcomeFB</string>
+    <string name="title_activity_match_summary">MatchSummary</string>
 
 </resources>

@@ -2,7 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.vodkasoft.canyousinkme.game.MenuFB" android:background="#00aeff"
+                tools:context="com.vodkasoft.canyousinkme.game.MenuFB" android:background="#2e2e2e"
         >
 
     <ImageView
@@ -11,24 +11,25 @@
             android:id="@+id/main_main_logo"
             android:src="@drawable/main_logo" android:adjustViewBounds="false"
             android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"/>
+            android:layout_marginTop="25dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Welcome,"
-            android:id="@+id/menufb_welcome_txt" android:layout_below="@+id/main_main_logo"
-            android:layout_centerHorizontal="true" android:textColor="#ffffffff"
-            android:layout_marginTop="20dp"/>
-
+            android:id="@+id/menufb_welcome_txt"
+            android:textColor="#ffffffff"
+            android:layout_below="@+id/main_main_logo" android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/menuguest_multiplayer_btn"
             android:src="@drawable/multiplayer_btn"
             android:background="@null"
-            android:onClick="GoToHostOrJoin" android:layout_below="@+id/menufb_welcome_txt"
-            android:layout_centerHorizontal="true" android:layout_marginTop="30dp"/>
+            android:onClick="GoToHostOrJoin"
+            android:layout_below="@+id/menufb_welcome_txt" android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"/>
     <ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content"
                  android:id="@+id/menuguest_singleplayer_btn"
                  android:src="@drawable/singleplayer_btn"

@@ -25,5 +25,6 @@
     <string name="title_activity_menu_guest">MenuGuest</string>
     <string name="title_activity_main_login">MainLogin</string>
     <string name="title_activity_leaderboards">Leaderboards</string>
+    <string name="title_activity_welcome_fb">WelcomeFB</string>
 
 </resources>

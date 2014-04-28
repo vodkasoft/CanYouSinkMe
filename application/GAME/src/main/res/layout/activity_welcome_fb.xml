@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.vodkasoft.canyousinkme.game.WelcomeFB" android:background="#2e2e2e"
+        >
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_main_logo"
+            android:src="@drawable/main_logo" android:adjustViewBounds="false"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"/>
+
+    <com.facebook.widget.ProfilePictureView android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:id="@+id/welcomefb_profilepicture"
+                                            android:layout_below="@+id/main_main_logo"
+                                            android:layout_centerHorizontal="true"
+                                            android:layout_marginTop="50dp"></com.facebook.widget.ProfilePictureView>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Medium Text"
+            android:id="@+id/welcomefb_welcome_txt"
+            android:textColor="#ffffff"
+            android:layout_marginTop="35dp" android:layout_below="@+id/welcomefb_profilepicture"
+            android:layout_centerHorizontal="true"/>
+    <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/welcomefb_continue_btn" android:layout_below="@+id/welcomefb_welcome_txt"
+            android:layout_centerHorizontal="true" android:src="@drawable/continue_btn"
+            android:background="@null" android:layout_marginTop="30dp"
+            android:onClick="Continue_Event"/>
+</RelativeLayout>

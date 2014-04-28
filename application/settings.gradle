@@ -1,1 +1,1 @@
-include ':GAME', 'facebook'
+include 'facebook', 'game'

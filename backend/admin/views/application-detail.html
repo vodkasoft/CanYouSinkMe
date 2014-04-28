@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html data-ng-app="applicationDetail">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Can You Sink Me? - Admin Console</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Stylesheets -->
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/admin/css/main.css">
+  <!--[if lt IE 9]>
+    <script src="js/vendor/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <!-- Main Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/admin"><img src="/admin/img/logo.png" width="25" height="25">Can You Sink Me?</span></a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="/admin/apps">Applications</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Main Content -->
+    <div class="container" ng-controller="MainController">
+      <div class="page-header">
+        <h1>Application Settings</h1>
+      </div>
+      <!-- General Alert -->
+      <div id="general-alert"></div>
+      <!-- Basic Settings -->
+      <div class="row">
+        <div class=" col-sm-8">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Basic Settings</h3>
+            </div>
+            <div class="panel-body">
+              <!-- Update form -->
+              <form class="form" role="form">
+                <div class="form-group" id="application-name-form-group">
+                  <label for="name" class="control-label">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="My Awesome Application" data-ng-model="application.name">
+                </div>
+                <div class="form-group">
+                  <label for="description" class="control-label">Description</label>
+                  <textarea class="form-control" rows=5 id="description" placeholder="One App to rule them all, One app to find them; One app to bring them all and in the darkness bind them." data-ng-model="application.description"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" data-ng-click="updateApplication()">Save Changes</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Security -->
+      <div class="row">
+        <div class=" col-sm-8">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Security</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <p class="col-sm-4"><strong>Application Key</strong></p>
+                <div class="col-sm-8">
+                  <p>{{application.applicationKey}}</p>
+                </div>
+              </div>
+              <div class="row">
+                <p class="col-sm-4"><strong>Client Secret</strong></p>
+                <div class="col-sm-8">
+                  <p>{{application.clientSecret}}</p>
+                </div>
+              </div>
+              <div class="row">
+                <p class="col-sm-4"><strong>Server Response Key</strong></p>
+                <div class="col-sm-8">
+                  <p>{{application.serverResponseKey}}</p>
+                </div>
+              </div>
+              <hr>
+              <!-- Regenerate Client Secret -->
+              <h3>Regenerate Client Secret</h3>
+              <p>Regenerating the client secret will cause the current client secret to stop working. This should only be done if the client secret has been compromised. <strong>This operation cannot be undone.</strong></p>
+              <button class="btn btn-primary" data-toggle="modal" data-target="#regenerate-client-secret-modal"><span class="glyphicon glyphicon-refresh"></span> Regenerate Client Secret</button>
+              <hr>
+              <!-- Regenerate Server Response Key -->
+              <h3>Regenerate Server Response Key</h3>
+              <p>Regenerating the server response key will cause clients that verify server messages to stop working. This should only be done if the server response key has been compromised. <strong>This operation cannot be undone.</strong></p>
+              <button class="btn btn-primary" data-toggle="modal" data-target="#regenerate-server-response-key-modal"><span class="glyphicon glyphicon-refresh"></span> Regenerate Server Response Key</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Delete Application -->
+      <div class="row">
+        <div class=" col-sm-8">
+          <div class="panel panel-danger">
+            <div class="panel-heading">
+              <h3 class="panel-title">Delete Application</h3>
+            </div>
+            <div class="panel-body">
+              <p>Once deleted the application key and client secret will no longer work. <strong>This operation cannot be undone.</strong></p>
+              <button class="btn btn-danger" data-toggle="modal" data-target="#delete-application-modal"><span class="glyphicon glyphicon-trash"></span> Delete Application</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Regenerate Client Secret Modal -->
+      <div  class="modal fade" id="regenerate-client-secret-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Regenerate Client Secret</h2>
+            </div>
+            <div class="modal-body">
+              <p>You are about to regenerate the client secret for this application. The application key will continue working, but requests that use the old client secret will be denied access. <strong>This operation cannot be undone.</strong></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" data-ng-click="regenerateClientSecret()"><span class="glyphicon glyphicon-refresh"></span> Regenerate Client Secret</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Regenerate Server Response Key Modal -->
+      <div  class="modal fade" id="regenerate-server-response-key-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Regenerate Server Response Key</h2>
+            </div>
+            <div class="modal-body">
+              <p>You are about to regenerate the server response key for this application. The application key will continue working, but requests that use the old client secret will stop be denied access. <strong>This operation cannot be undone.</strong></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" data-ng-click="regenerateServerResponseKey()"><span class="glyphicon glyphicon-refresh"></span> Regenerate Server Response Key</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Delete Application Modal -->
+      <div  class="modal fade" id="delete-application-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Delete Application</h2>
+            </div>
+            <div class="modal-body">
+              <p>You are about to delete this application. The application key and client secret will stop working. <strong>This operation cannot be undone.</strong></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-danger" data-ng-click="deleteApplication()"><span class="glyphicon glyphicon-trash"></span> Delete Application</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Page Footer -->
+    <footer class="container-fluid">
+      <div class="col-sm-4 col-sm-offset-4">
+        <a href="http://vodkasoft.com" target="_blank">Vodkasoft</a> <span class="text-muted">|</span>
+        <a href="" target="_blank">API&nbsp;Reference</a> <span class="text-muted">|</span>
+        <a href="https://github.com/vodkasoft/CanYouSinkMe" target="_blank">Source&nbsp;Code</a>
+      </div>
+    </footer>
+    <!-- JQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <!-- AngularJS -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.min.js"></script>
+    <!-- Modules -->
+    <script src="/admin/js/application-detail.min.js"></script>
+  </body>
+  </html>

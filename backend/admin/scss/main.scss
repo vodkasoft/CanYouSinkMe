@@ -1,0 +1,85 @@
+body {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+  padding-top: 80px;
+}
+
+body > footer {
+  text-align: center;
+  margin-top: 2.5em;
+  margin-bottom: 1.5em;
+}
+
+.navbar-inverse {
+  background-color: #2182E6;
+  color: #fff;
+  border-bottom: 1px solid #eee;
+}
+.navbar-inverse .navbar-nav,
+.navbar-inverse .navbar-nav>li>a {
+  color: #fff;
+}
+
+.navbar-inverse .navbar-nav>li>a:hover,
+.navbar-inverse .navbar-nav>li>a:focus,
+.navbar-inverse .navbar-nav>.open>a,
+.navbar-inverse .navbar-nav>.open>a:hover,
+.navbar-inverse .navbar-nav>.open>a:focus {
+  background-color: #004FB3;
+}
+
+.glyph-action:hover,
+.glyph-action:focus {
+  color: #2182E6;
+  cursor: pointer;
+}
+
+.navbar-inverse .navbar-brand {
+  color: #fff;
+  font-weight: 300;
+  line-height: 25px;
+}
+
+.navbar-inverse .navbar-brand img {
+  padding: 0;
+  vertical-align: top;
+  margin-right: 0.5em;
+}
+
+.navbar .navbar-brand .small {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.5ex;
+}
+
+
+.navbar-inverse .navbar-toggle:focus,
+.navbar-inverse .navbar-toggle:hover {
+  background-color: #004FB3;
+  border-color: red;
+}
+
+.navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
+  color: #000;
+}
+
+.navbar-inverse .navbar-toggle,
+.navbar-inverse .navbar-toggle {
+  border: none;
+}
+
+.table {
+  text-align: center;
+  th {
+    font-weight: bold;
+
+    text-align: center;
+    a {
+      color: #333;
+      text-decoration: none;
+    }
+  }
+  td {
+    text-align: center;
+  }
+}

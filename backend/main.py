@@ -16,16 +16,22 @@
 
 import webapp2
 
+from controller.application import ApplicationHandler, ApplicationSetHandler, \
+    ClientSecretKeyHandler, ServerResponseKeyHandler
 from controller.user import UserHandler, UserSetHandler
 from controller.match import MatchHandler, MatchSetHandler, UserMatchesHandler
 from controller.leaderboard import CountryLeaderboardHandler, GlobalLeaderboardHandler
 
 """ Application and routes for request handlers """
-app = webapp2.WSGIApplication([(r'/users', UserSetHandler),
+app = webapp2.WSGIApplication([(r'/applications', ApplicationSetHandler),
+                               (r'/applications/(\S*)/client/secret', ClientSecretKeyHandler),
+                               (r'/applications/(\S*)/server/key', ServerResponseKeyHandler),
+                               (r'/applications/(\S*)', ApplicationHandler),
+                               (r'/users', UserSetHandler),
                                (r'/users/(\S*)/matches', UserMatchesHandler),
                                (r'/users/(\S*)', UserHandler),
                                (r'/matches', MatchSetHandler),
                                (r'/matches/(\S*)', MatchHandler),
                                (r'/leaderboards', GlobalLeaderboardHandler),
                                (r'/leaderboards/([a-zA-Z]{2})', CountryLeaderboardHandler)],
-                              debug=False)
+                              debug=True)

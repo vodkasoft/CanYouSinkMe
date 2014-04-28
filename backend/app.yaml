@@ -8,9 +8,40 @@ handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
+  secure: always
+
+- url: /apple-touch-icon-precomposed\.png
+  static_files: apple-touch-icon-precomposed.png
+  upload: apple-touch-icon-precomposed\.png
+  secure: always
+
+- url: /admin
+  static_files: admin/views/dashboard.html
+  upload: admin/views/dashboard.html
+  secure: always
+  login: admin
+
+- url: /admin/apps
+  static_files: admin/views/application-master.html
+  upload: admin/views/application-master.html
+  secure: always
+  login: admin
+
+- url: /admin/apps/(.+)
+  static_files: admin/views/application-detail.html
+  upload: admin/views/application-detail.html
+  secure: always
+  login: admin
+
+- url: /admin/(.+)
+  static_files: admin/\1
+  upload: admin/(.+)
+  secure: always
+  login: admin
 
 - url: .*
   script: main.app
+  secure: always
 
 libraries:
 - name: webapp2

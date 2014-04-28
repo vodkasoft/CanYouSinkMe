@@ -17,7 +17,6 @@ import logging
 from math import sqrt
 
 from google.appengine.api.datastore_errors import BadValueError
-
 from google.appengine.ext import ndb
 
 
@@ -43,6 +42,34 @@ def _validate_non_negative_int(value):
 
 """ The maximum score for a single game """
 _PERFECT_SCORE = 200
+
+
+class Application(ndb.Model):
+    """ Application Entity """
+
+    """ Name of the application """
+    name = ndb.StringProperty('n', required=True)
+
+    """ Small description for the application """
+    description = ndb.TextProperty('d', indexed=False, required=False)
+
+    """ Number of calls to the backend """
+    api_calls = ndb.IntegerProperty('a', default=0, indexed=False, required=True,
+                                    validator=lambda prop, value:
+                                    _validate_non_negative_int(value))
+
+    """ User who registered the application """
+    registrant = ndb.StringProperty('r', indexed=True, required=True)
+
+    """ Date when the application was created """
+    registration_timestamp = ndb.DateTimeProperty('t', auto_now_add=True, indexed=True,
+                                                  required=True)
+
+    """ Client Secret Key for authentication """
+    client_secret = ndb.StringProperty('c', indexed=False, required=True)
+
+    """ Server Response Key for message authentication """
+    server_response_key = ndb.StringProperty('s', indexed=False, required=True)
 
 
 class User(ndb.Model):

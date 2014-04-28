@@ -15,12 +15,30 @@
 # limitations under the License.
 
 from webapp2 import RequestHandler
+from google.appengine.api import users
 
 from util.format import encode_json
 
 
 class JsonRequestHandler(RequestHandler):
     """ A request handler that outputs JSON data """
+
+    def require_admin_login(self):
+        """ Checks if an admin user is making the request, sends error status message otherwise
+
+            Returns:
+            :return: true if an admin user is making the request, false otherwise
+        """
+        user = users.get_current_user()
+        if user:
+            if not users.is_current_user_admin():
+                self.write_message(401)
+                return False
+            else:
+                return True
+        else:
+            self.write_message(403)
+            return False
 
     def write_error(self, message='Unknown error'):
         """ Outputs an error and sends a 400 status code

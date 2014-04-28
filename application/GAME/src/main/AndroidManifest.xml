@@ -80,6 +80,10 @@
             android:name="com.vodkasoft.canyousinkme.game.MenuGuest"
             android:label="@string/title_activity_menu_guest" >
         </activity>
+        <activity
+            android:name="com.vodkasoft.canyousinkme.game.Leaderboards"
+            android:label="@string/title_activity_leaderboards" >
+        </activity>
     </application>
 
 </manifest>

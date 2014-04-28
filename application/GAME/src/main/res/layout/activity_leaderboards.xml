@@ -1,0 +1,34 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.vodkasoft.canyousinkme.game.Leaderboards" android:background="#2e2e2e"
+        >
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_main_logo"
+            android:src="@drawable/leaderboards_logo" android:adjustViewBounds="false"
+            android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+            android:layout_marginLeft="36dp" android:layout_marginTop="3dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Leaderboards"
+            android:id="@+id/textView" android:layout_below="@+id/main_main_logo"
+            android:layout_centerHorizontal="true" android:textColor="#FFFFFF"
+            android:layout_marginTop="20dp"/>
+    <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/leaderboards_scrollview" android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true" android:layout_marginTop="30dp">
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" android:id="@+id/leaderboards_horizontalview">
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

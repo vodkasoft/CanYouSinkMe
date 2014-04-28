@@ -24,5 +24,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_menu_guest">MenuGuest</string>
     <string name="title_activity_main_login">MainLogin</string>
+    <string name="title_activity_leaderboards">Leaderboards</string>
 
 </resources>

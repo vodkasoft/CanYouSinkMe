@@ -1,16 +1,13 @@
 package com.vodkasoft.canyousinkme.game;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
-public class MenuFB extends Activity {
+public class Leaderboards extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,16 +15,14 @@ public class MenuFB extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_menu_fb);
-        TextView TV = (TextView) findViewById(R.id.menufb_welcome_txt);
-        TV.setText("Welcome, " + FBSession.getName());
+        setContentView(R.layout.activity_leaderboards);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_fb, menu);
+        getMenuInflater().inflate(R.menu.leaderboards, menu);
         return true;
     }
 
@@ -41,15 +36,5 @@ public class MenuFB extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void About_Event(View view){
-        Intent intent = new Intent(this, About.class);
-        startActivity(intent);
-    }
-
-    public void Leaderboards_Event(View view){
-        Intent intent = new Intent(this, Leaderboards.class);
-        startActivity(intent);
     }
 }

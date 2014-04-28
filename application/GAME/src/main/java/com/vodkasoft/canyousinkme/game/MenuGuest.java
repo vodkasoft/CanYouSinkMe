@@ -9,15 +9,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class MenuGuest extends Activity {
+import com.vodkasoft.canyousinkme.gamelogic.GameManager;
+import com.vodkasoft.canyousinkme.gamelogic.IConstant;
 
-    public final String MULTIPLAYER = "MULTPLAYER";
-
-    public final String SINGLEPLAYER = "SINGLEPLAYER";
-
-    public final String LEADERBOARDS = "LEADERBOARDS";
-
-    public final String ABOUT = "ABOUT";
+public class MenuGuest extends Activity implements IConstant{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +49,13 @@ public class MenuGuest extends Activity {
 
     public void GoToHostOrJoin(View view){
         Intent intent = new Intent(this, HostOrJoin.class);
+        startActivity(intent);
+    }
+
+    public void goToCreateBoard(View view){
+        GameManager.setMatchType(LOCAL_MATCH);
+        Intent intent = new Intent(this, CreateBoard.class);
+
         startActivity(intent);
     }
 }

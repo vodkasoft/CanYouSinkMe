@@ -7,7 +7,7 @@ import java.util.Random;
  * Vodkasoft (R)
  * Created by jomarin on 4/26/14.
  */
-public class CPUPlayer {
+public class CPUPlayer implements IConstant{
 
 
     public DualMatrix getBoard() {
@@ -30,8 +30,8 @@ public class CPUPlayer {
     }
 
     public Integer[] getPosition() {
-        int x = randomGenerator.nextInt(Constant.ROWS);
-        int y = randomGenerator.nextInt(Constant.COLUMNS);
+        int x = randomGenerator.nextInt(ROWS);
+        int y = randomGenerator.nextInt(COLUMNS);
         return new Integer[]{x, y};
     }
 
@@ -44,7 +44,7 @@ public class CPUPlayer {
             position = getPosition();
         }
 
-        if (GameManager.getPlayerBoard().isShip(position[Constant.X_COORDINATE], position[Constant.Y_COORDINATE])) {
+        if (GameManager.getPlayerBoard().isShip(position[X_COORDINATE], position[Y_COORDINATE])) {
             lastHitPosition = position;
             lastPositionWasHit = true;
         } else {
@@ -55,10 +55,10 @@ public class CPUPlayer {
     }
 
     private boolean isInBound(Integer[] pPosition){
-        return pPosition[Constant.X_COORDINATE] < Constant.ROWS &&
-               pPosition[Constant.X_COORDINATE] > -1 &&
-               pPosition[Constant.Y_COORDINATE] < Constant.COLUMNS &&
-               pPosition[Constant.Y_COORDINATE] > -1 ?
+        return pPosition[X_COORDINATE] < ROWS &&
+               pPosition[X_COORDINATE] > -1 &&
+               pPosition[Y_COORDINATE] < COLUMNS &&
+               pPosition[Y_COORDINATE] > -1 ?
                true : false;
     }
 
@@ -66,61 +66,61 @@ public class CPUPlayer {
         Integer[] position = lastHitPosition;
 
         switch (++lastSurroundingPositionCode) {
-            case Constant.NORTH:
-                position[Constant.Y_COORDINATE]--;
+            case NORTH:
+                position[Y_COORDINATE]--;
                 if (isInBound(position)){
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            case Constant.NORTHEAST:
-                position[Constant.X_COORDINATE]++;
-                position[Constant.Y_COORDINATE]--;
+            case NORTHEAST:
+                position[X_COORDINATE]++;
+                position[Y_COORDINATE]--;
                 if (isInBound(position)){
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            case Constant.EAST:
-                position[Constant.X_COORDINATE]++;
+            case EAST:
+                position[X_COORDINATE]++;
                 if (isInBound(position)){
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            case Constant.SOUTHEAST:
-                position[Constant.X_COORDINATE]++;
-                position[Constant.Y_COORDINATE]++;
+            case SOUTHEAST:
+                position[X_COORDINATE]++;
+                position[Y_COORDINATE]++;
                 if (isInBound(position)){
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            case Constant.SOUTH:
-                position[Constant.Y_COORDINATE]++;
+            case SOUTH:
+                position[Y_COORDINATE]++;
                 if (isInBound(position)){
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            case Constant.SOUTHWEST:
-                position[Constant.X_COORDINATE]--;
-                position[Constant.Y_COORDINATE]++;
+            case SOUTHWEST:
+                position[X_COORDINATE]--;
+                position[Y_COORDINATE]++;
                 if (isInBound(position)){
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            case Constant.WEST:
-                position[Constant.X_COORDINATE]--;
+            case WEST:
+                position[X_COORDINATE]--;
                 if (isInBound(position)){
                     return position;
                 } else {
                     getSurroundingPosition();
                 }
-            case Constant.NORTHWEST:
-                position[Constant.X_COORDINATE]--;
-                position[Constant.Y_COORDINATE]--;
+            case NORTHWEST:
+                position[X_COORDINATE]--;
+                position[Y_COORDINATE]--;
                 if (isInBound(position)){
                     return position;
                 } else {

@@ -37,7 +37,7 @@
             android:id="@+id/mine_btn"
             android:src="@drawable/mine_btn_disabled" android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" android:background="@null"
-            android:onClick="GoToMine"/>
+            android:onClick="GoToPlayer"/>
     <ImageButton
             android:onClick="GoToOpponent"
             android:layout_width="wrap_content"

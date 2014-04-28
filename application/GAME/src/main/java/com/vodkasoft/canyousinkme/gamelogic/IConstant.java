@@ -4,8 +4,7 @@ package com.vodkasoft.canyousinkme.gamelogic;
  * Vodkasoft (R)
  * Created by jomarin on 4/27/14.
  */
-public class Constant {
-
+public interface IConstant {
 
     public static final int NORTH = 0;
     public static final int NORTHEAST = 1;
@@ -40,10 +39,5 @@ public class Constant {
 
     public static final int BLUETOOTH_MATCH = 0;
     public static final int LOCAL_MATCH = 1;
-
-
-
-
-
 
 }

@@ -12,33 +12,33 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vodkasoft.canyousinkme.gamelogic.Constant;
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
+import com.vodkasoft.canyousinkme.gamelogic.IConstant;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-public class Gaming extends Activity {
+public class Gaming extends Activity implements IConstant {
 
-    Boolean Mine = true; // Which board I'm looking
     private TextView textViewPlayerScore;
 
-    public void GoToMine(boolean isReceiving) throws InterruptedException, TimeoutException, ExecutionException {
+    public void GoToPlayer(boolean isReceiving) throws InterruptedException, TimeoutException, ExecutionException {
 
         UpdateMineButtons();
+
+        if (isReceiving && GameManager.getMatchType() == BLUETOOTH_MATCH) {
+            waitForEnemyMissile();
+        } else {
+            GameManager.receiveMissile();
+        }
+
         drawBoard(GameManager.getPlayerBoard());
         textViewPlayerScore.setText(String.valueOf(GameManager.getPlayerScore()));
-
-        if (isReceiving) {
-            Mine = true;
-            waitForEnemyMissile();
-        }
 
     }
 
     public void GoToOpponent() {
-        Mine = false;
         UpdateOpponentButtons();
         drawBoard(GameManager.getOpponentBoard());
     }
@@ -76,12 +76,9 @@ public class Gaming extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 GameManager.setMissileCoordinate(getMatrixCoords(i));
-                if (Mine) {
+                ImageView IV = (ImageView) view;
+                IV.setImageResource(R.drawable.targeted);
 
-                } else {
-                    ImageView IV = (ImageView) view;
-                    IV.setImageResource(R.drawable.targeted);
-                }
             }
         });
     }
@@ -112,8 +109,11 @@ public class Gaming extends Activity {
     }
 
     public void sendMissile(View view) throws InterruptedException, TimeoutException, ExecutionException {
-        GameManager.sendMissile(Constant.BLUETOOTH_MATCH);
-        waitForMissileResult();
+        GameManager.sendMissile();
+        if (GameManager.getMatchType() == BLUETOOTH_MATCH)
+            waitForMissileResult();
+        else GoToPlayer(false);
+
     }
 
     public void waitForEnemyMissile() throws InterruptedException, TimeoutException, ExecutionException {
@@ -153,19 +153,24 @@ public class Gaming extends Activity {
             @Override
             public void onClick(View view) {
                 try {
-                    GoToMine(false);
+                    GoToPlayer(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        // Host shoots first
-        if (GameManager.isHost()) GoToOpponent();
-        else try {
-            GoToMine(true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (GameManager.getMatchType() == LOCAL_MATCH){
+            GameManager.createCPUplayer();
+            GoToOpponent();
+        } else if (GameManager.isHost() && GameManager.getMatchType() == BLUETOOTH_MATCH)
+            GoToOpponent();
+        else {
+            try {
+                GoToPlayer(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -176,7 +181,7 @@ public class Gaming extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            GameManager.receiveMissile(Constant.BLUETOOTH_MATCH);
+            GameManager.receiveMissile();
 
             return null;
         }
@@ -210,7 +215,7 @@ public class Gaming extends Activity {
         @Override
         protected void onPostExecute(Void params) {
             try {
-                GoToMine(true);
+                GoToPlayer(true);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {

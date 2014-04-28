@@ -4,16 +4,16 @@ import com.vodkasoft.canyousinkme.game.R;
 
 import java.util.Random;
 
-public class DualMatrix {
+public class DualMatrix implements IConstant{
 
     private final Random randomGenerator = new Random();
-    private Integer[] _IMGs = new Integer[Constant.ROWS * Constant.COLUMNS];
-    private Integer[][] _LOGIC = new Integer[Constant.ROWS][Constant.COLUMNS];
+    private Integer[] _IMGs = new Integer[ROWS * COLUMNS];
+    private Integer[][] _LOGIC = new Integer[ROWS][COLUMNS];
 
     public DualMatrix(boolean isArtificialIntelligence) {
         int c = 0;
-        for (int i = 0; i < Constant.ROWS; i++) {
-            for (int j = 0; j < Constant.COLUMNS; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 _LOGIC[i][j] = 0;
                 _IMGs[c++] = R.drawable.game_v_rect;
             }
@@ -26,9 +26,9 @@ public class DualMatrix {
 
     public int getFlatLocation(Integer[] pPair) {
         int c = 0;
-        for (int i = 0; i < Constant.ROWS; i++) {
-            for (int j = 0; j < Constant.COLUMNS; j++) {
-                if (i == pPair[Constant.X_COORDINATE] && j == pPair[Constant.Y_COORDINATE]) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                if (i == pPair[X_COORDINATE] && j == pPair[Y_COORDINATE]) {
                     return c;
                 } else {
                     c++;
@@ -39,19 +39,19 @@ public class DualMatrix {
     }
 
     public Integer[] getPosition() {
-        int x = randomGenerator.nextInt(Constant.ROWS);
-        int y = randomGenerator.nextInt(Constant.COLUMNS);
+        int x = randomGenerator.nextInt(ROWS);
+        int y = randomGenerator.nextInt(COLUMNS);
         return new Integer[]{x, y};
     }
 
     public int getShipSize(int pShipCode) {
         switch (pShipCode) {
             case 1:
-                return Constant.SHIPA_SIZE;
+                return SHIPA_SIZE;
             case 2:
-                return Constant.SHIPB_SIZE;
+                return SHIPB_SIZE;
             case 3:
-                return Constant.SHIPC_SIZE;
+                return SHIPC_SIZE;
             default:
                 return 0;
         }
@@ -73,40 +73,45 @@ public class DualMatrix {
         this._LOGIC = _LOGIC;
     }
 
-    public boolean isInterfering(Integer[] pPair, boolean isHorizontal, int pLenght) {
+    public boolean isInterfering(Integer[] pPair, boolean isVertical, int pLenght) {
         int row = pPair[0];
         int column = pPair[1];
-        if (isHorizontal) {
-            while (pLenght > 0) {
-                if (_LOGIC[row][column] != 0) {
-                    return false;
+
+        try {
+            if (isVertical) {
+                while (pLenght > 0) {
+                    if (_LOGIC[row][column] != 0) {
+                        return true;
+                    }
+                    pLenght--;
+                    column++;
                 }
-                pLenght--;
-                column++;
-            }
-        } else {
-            while (pLenght > 0) {
-                if (_LOGIC[row][column] != 0) {
-                    return false;
+            } else {
+                while (pLenght > 0) {
+                    if (_LOGIC[row][column] != 0) {
+                        return true;
+                    }
+                    pLenght--;
+                    row++;
                 }
-                pLenght--;
-                row++;
             }
+        } catch (ArrayIndexOutOfBoundsException exception) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     public boolean isShip(int pX, int pY) {
-        return _LOGIC[pX][pY] != Constant.EMPTY;
+        return _LOGIC[pX][pY] != EMPTY;
     }
 
     public void putFail(int pX, int pY) {
-        _LOGIC[pX][pY] = Constant.FAIL;
+        _LOGIC[pX][pY] = FAIL;
         _IMGs[getFlatLocation(new Integer[]{pX, pY})] = R.drawable.fail;
     }
 
     public void putHit(int pX, int pY) {
-        _LOGIC[pX][pY] = Constant.HIT;
+        _LOGIC[pX][pY] = HIT;
         _IMGs[getFlatLocation(new Integer[]{pX, pY})] = R.drawable.hit;
     }
 

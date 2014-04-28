@@ -45,6 +45,7 @@ public class CreateBoard extends Activity {
         TextView textView = (TextView) findViewById(R.id.createyourboard_txt);
         textView.setTypeface(typeface);
         textView.setTextSize(20);
+        GameManager.resetMatchData();
         DUALMATRIX = new DualMatrix(false);
         drawBoard();
     }
@@ -88,7 +89,7 @@ public class CreateBoard extends Activity {
                             CharSequence CS = "Invalid position";
                             showToastWithMessage(CS);
                         } else {
-                            if (!DUALMATRIX.isInterfering(Pair, CB.isChecked(), SHIPA_SIZE)) {
+                            if (DUALMATRIX.isInterfering(Pair, CB.isChecked(), SHIPA_SIZE)) {
                                 CharSequence CS = "There is another ship in those spaces";
                                 showToastWithMessage(CS);
                             } else {
@@ -104,7 +105,7 @@ public class CreateBoard extends Activity {
                             CharSequence CS = "Invalid position";
                             showToastWithMessage(CS);
                         } else {
-                            if (!DUALMATRIX.isInterfering(Pair, CB.isChecked(), SHIPB_SIZE)) {
+                            if (DUALMATRIX.isInterfering(Pair, CB.isChecked(), SHIPB_SIZE)) {
                                 CharSequence CS = "There is another ship in those spaces";
                                 showToastWithMessage(CS);
                             } else {
@@ -120,7 +121,7 @@ public class CreateBoard extends Activity {
                             CharSequence CS = "Invalid position";
                             showToastWithMessage(CS);
                         } else {
-                            if (!DUALMATRIX.isInterfering(Pair, CB.isChecked(), SHIPC_SIZE)) {
+                            if (DUALMATRIX.isInterfering(Pair, CB.isChecked(), SHIPC_SIZE)) {
                                 CharSequence CS = "There is another ship in those spaces";
                                 showToastWithMessage(CS);
                             } else {

@@ -8,20 +8,13 @@ import com.vodkasoft.canyousinkme.utils.JsonSerializer;
  * Vodkasoft (R)
  * Created by jomarin on 4/6/14.
  */
-public class GameManager implements IConstant{
+public class GameManager implements IConstant {
 
     private static CPUPlayer cpuPlayer = null;
-
-    public static int getMatchType() {
-        return matchType;
-    }
-
-    public static void setMatchType(int matchType) {
-        GameManager.matchType = matchType;
-    }
-
-    private static int matchType;
+    private static int playerHitCount;
+    private static int opponentHitCount;
     private static boolean host;
+    private static int matchType;
     private static Integer[] missileCoordinate = new Integer[2];
     private static Player opponent = null;
     private static DualMatrix opponentBoard;
@@ -32,24 +25,24 @@ public class GameManager implements IConstant{
     private static boolean receivedMissile = false;
     private static boolean receivedShotResult = false;
 
+    public static void createCPUplayer() {
+        cpuPlayer = new CPUPlayer();
+    }
+
     public static CPUPlayer getCpuPlayer() {
         return cpuPlayer;
     }
 
-    public static void createCPUplayer(){
-        cpuPlayer = new CPUPlayer();
-    }
-
-    public static void resetMatchData(){
-        opponent = null;
-        opponentBoard = new DualMatrix(false);
-        opponentScore = INITIAL_SCORE;
-        playerBoard = null;
-        playerScore = INITIAL_SCORE;
-    }
-
     public static void setCpuPlayer(CPUPlayer cpuPlayer) {
         GameManager.cpuPlayer = cpuPlayer;
+    }
+
+    public static int getMatchType() {
+        return matchType;
+    }
+
+    public static void setMatchType(int matchType) {
+        GameManager.matchType = matchType;
     }
 
     public static Integer[] getMissileCoordinate() {
@@ -104,6 +97,11 @@ public class GameManager implements IConstant{
         playerScore = pPlayerScore;
     }
 
+    public static boolean isEndOfGame() {
+        return playerHitCount == SHIPA_SIZE + SHIPB_SIZE + SHIPC_SIZE ||
+               opponentHitCount == SHIPA_SIZE + SHIPB_SIZE + SHIPC_SIZE;
+    }
+
     public static boolean isHost() {
         return host;
     }
@@ -141,7 +139,16 @@ public class GameManager implements IConstant{
 
     }
 
-    public static void sendMissile(){
+    public static void resetMatchData() {
+        opponent = null;
+        opponentBoard = new DualMatrix(false);
+        opponentScore = INITIAL_SCORE;
+        playerBoard = null;
+        playerScore = INITIAL_SCORE;
+        playerHitCount = 0;
+    }
+
+    public static void sendMissile() {
 
         switch (matchType) {
             case LOCAL_MATCH:
@@ -154,21 +161,6 @@ public class GameManager implements IConstant{
 
     }
 
-    private static void sendLocalMissile() {
-        if (cpuPlayer.getBoard().isShip(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE])) {
-            opponentBoard.putHit(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
-            playerScore += MISSILE_SUCCESSFUL_POINTS;
-        } else {
-            opponentBoard.putFail(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
-        }
-    }
-
-    private static void sendBluetoothMissile() {
-        MissileMessage missileMessage = new MissileMessage(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
-        String json = JsonSerializer.fromObjectToJson(missileMessage);
-        BleutoothManager.sendMessage(MISSILE_MESSAGE_KEY, json);
-    }
-
     public static void updateMissileResult() {
         int timeLeft = WAIT_TIME;
         BluetoothMessage btMessage;
@@ -179,6 +171,7 @@ public class GameManager implements IConstant{
                 if (btMessage.getKey() == MISSILE_STATE_MESSAGE_KEY) {
                     if (Boolean.valueOf(btMessage.getData())) {
                         playerScore += MISSILE_SUCCESSFUL_POINTS;
+                        playerHitCount++;
                         opponentBoard.putHit(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
                     } else {
                         opponentBoard.putFail(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
@@ -195,7 +188,6 @@ public class GameManager implements IConstant{
 
         }
     }
-
 
     public void updateOpponentBoard() {
     }
@@ -215,6 +207,7 @@ public class GameManager implements IConstant{
                     if (playerBoard.isShip(mMessage.getxCoordinate(), mMessage.getyCoordinate())) {
                         BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "true");
                         playerBoard.putHit(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                        opponentHitCount++;
                     } else {
                         BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "false");
                         playerBoard.putFail(mMessage.getxCoordinate(), mMessage.getyCoordinate());
@@ -240,5 +233,21 @@ public class GameManager implements IConstant{
             playerBoard.putFail(missilePosition[X_COORDINATE], missilePosition[Y_COORDINATE]);
         }
 
+    }
+
+    private static void sendBluetoothMissile() {
+        MissileMessage missileMessage = new MissileMessage(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+        String json = JsonSerializer.fromObjectToJson(missileMessage);
+        BleutoothManager.sendMessage(MISSILE_MESSAGE_KEY, json);
+    }
+
+    private static void sendLocalMissile() {
+        if (cpuPlayer.getBoard().isShip(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE])) {
+            opponentBoard.putHit(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+            playerScore += MISSILE_SUCCESSFUL_POINTS;
+            playerHitCount++;
+        } else {
+            opponentBoard.putFail(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+        }
     }
 }

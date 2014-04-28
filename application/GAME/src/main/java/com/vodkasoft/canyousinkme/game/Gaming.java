@@ -1,6 +1,7 @@
 package com.vodkasoft.canyousinkme.game;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -113,7 +114,13 @@ public class Gaming extends Activity implements IConstant {
         if (GameManager.getMatchType() == BLUETOOTH_MATCH)
             waitForMissileResult();
         else GoToPlayer(false);
+    }
 
+    public void checkGameState(){
+        if (GameManager.isEndOfGame()) {
+            Intent intent = new Intent(this, MatchSummary.class);
+            startActivity(intent);
+        }
     }
 
     public void waitForEnemyMissile() throws InterruptedException, TimeoutException, ExecutionException {
@@ -187,11 +194,6 @@ public class Gaming extends Activity implements IConstant {
         }
 
         @Override
-        public void onPreExecute() {
-        }
-
-
-        @Override
         protected void onPostExecute(Void params) {
             GoToOpponent();
         }
@@ -200,9 +202,6 @@ public class Gaming extends Activity implements IConstant {
 
     private class MissileResultTask extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        public void onPreExecute() {
-        }
 
         @Override
         protected Void doInBackground(Void... params) {

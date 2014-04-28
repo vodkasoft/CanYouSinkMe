@@ -1,11 +1,14 @@
 package com.vodkasoft.canyousinkme.game;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 public class MenuFB extends Activity {
 
@@ -16,6 +19,8 @@ public class MenuFB extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_menu_fb);
+        TextView TV = (TextView) findViewById(R.id.menufb_welcome_txt);
+        TV.setText("Welcome, " + FBSession.getName());
     }
 
 
@@ -36,5 +41,10 @@ public class MenuFB extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void About_Event(View view){
+        Intent intent = new Intent(this, About.class);
+        startActivity(intent);
     }
 }

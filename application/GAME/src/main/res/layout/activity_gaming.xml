@@ -3,15 +3,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context="com.vodkasoft.canyousinkme.game.Gaming"
-                android:background="#FFFFFF">
+                android:background="#00aeff">
 
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/gamelayerup" android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" android:src="@drawable/game_layer_up"
-            android:layout_marginTop="-45dp" android:layout_marginRight="-25dp"
-            />
     <GridView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,7 +12,7 @@
             android:gravity="center"
             android:numColumns="10"
             android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-            android:layout_alignBottom="@+id/gamelayerup" android:layout_marginBottom="55dp"
+            android:layout_marginBottom="180dp"
             android:layout_marginRight="40dp"
             android:layout_marginTop="70dp" android:layout_marginLeft="40dp"
             android:background="#437bbe"/>
@@ -28,23 +21,27 @@
             android:layout_height="wrap_content"
             android:id="@+id/shoot_btn"
             android:background="@null"
-            android:src="@drawable/shoot_btn_disabled" android:layout_below="@+id/gamelayerup"
-            android:layout_alignParentEnd="true" android:layout_marginRight="5dp"
-            android:onClick="sendMissile"/>
+            android:src="@drawable/shoot_btn_disabled"
+            android:onClick="sendMissile"
+            android:layout_alignBottom="@+id/textViewPlayerScore"
+            android:layout_alignEnd="@+id/container_grid_gaming"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/mine_btn"
             android:src="@drawable/mine_btn_disabled" android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" android:background="@null"
-            android:onClick="GoToPlayer"/>
+            android:onClick="GoToMine"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"/>
     <ImageButton
             android:onClick="GoToOpponent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/opponent_btn"
-            android:layout_alignParentTop="true" android:layout_alignEnd="@+id/shoot_btn"
-            android:background="@null" android:src="@drawable/opponent_btn"/>
+            android:background="@null" android:src="@drawable/opponent_btn"
+            android:layout_alignParentTop="true" android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp" android:layout_marginRight="40dp"/>
 
     <TextView
             android:layout_width="wrap_content"
@@ -59,11 +56,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/textViewPlayerScore"
-        android:layout_below="@+id/gamelayerup"
-        android:layout_alignStart="@+id/container_grid_gaming"
-        android:layout_alignBottom="@+id/shoot_btn"
-        android:layout_alignEnd="@+id/textViewChronometer"
-        android:text="0"/>
+        android:text="0" android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/container_grid_gaming" android:layout_marginBottom="100dp"/>
 
 
 </RelativeLayout>

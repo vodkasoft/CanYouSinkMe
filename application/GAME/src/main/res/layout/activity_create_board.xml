@@ -3,15 +3,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context="com.vodkasoft.canyousinkme.game.CreateBoard"
-                android:background="#c0d3ff">
+                android:background="#00aeff">
 
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/gamelayerup" android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" android:src="@drawable/game_layer_up"
-            android:layout_marginTop="-45dp" android:layout_marginRight="-25dp"
-            />
     <GridView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,15 +12,15 @@
             android:gravity="center"
             android:numColumns="10"
             android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
-            android:layout_alignBottom="@+id/gamelayerup" android:layout_marginBottom="55dp"
             android:layout_marginRight="40dp"
             android:layout_marginTop="70dp" android:layout_marginLeft="40dp"
-            android:background="#437bbe"/>
+            android:background="#437bbe" android:layout_marginBottom="180dp"/>
     <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/scrollView" android:layout_below="@+id/gamelayerup"
-            android:layout_alignParentStart="true" android:layout_marginTop="-15dp">
+            android:id="@+id/scrollView"
+            android:layout_alignParentTop="false" android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true" android:layout_marginTop="450dp">
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
@@ -42,21 +35,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/shipA_btn" android:src="@drawable/shipa"
-                        android:background="#c0d3ff"/>
+                        android:background="@null"/>
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="4 spaces"
                         android:id="@+id/txtshipA" android:textSize="20dp"
-                        android:layout_marginLeft="6dp"/>
+                        android:layout_marginLeft="6dp" android:textColor="#ffffffff"/>
                 <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Horizontal"
                         android:id="@+id/shipA_check" android:layout_below="@+id/gamelayerup"
                         android:layout_alignParentEnd="true" android:layout_marginLeft="19dp"
-                        android:checked="true"/>
+                        android:checked="true" android:textColor="#ffffffff"/>
 
             </LinearLayout>
             <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
@@ -66,18 +59,19 @@
                 <ImageButton android:onClick="putShipB"
                         android:layout_width="wrap_content"
                              android:layout_height="wrap_content" android:id="@+id/shipB_btn"
-                             android:src="@drawable/shipb" android:background="#c0d3ff"
+                             android:src="@drawable/shipb" android:background="@null"
                         />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:textAppearance="?android:attr/textAppearanceSmall"
                           android:text="4 spaces" android:id="@+id/txtshipB"
                           android:textSize="20dp"
-                          android:layout_marginLeft="6dp"/>
+                          android:layout_marginLeft="6dp" android:textColor="#ffffffff"/>
                 <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:text="Horizontal" android:id="@+id/shipB_check"
                           android:layout_below="@+id/gamelayerup"
                           android:layout_alignParentEnd="true"
-                          android:checked="true" android:layout_marginLeft="19dp"/>
+                          android:checked="true" android:layout_marginLeft="19dp"
+                          android:textColor="#ffffffff"/>
             </LinearLayout>
             <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
                           android:layout_height="fill_parent"
@@ -87,16 +81,17 @@
                         android:onClick="putShipC"
                         android:layout_width="wrap_content"
                              android:layout_height="wrap_content" android:id="@+id/shipC_btn"
-                             android:src="@drawable/shipc" android:background="#c0d3ff"/>
+                             android:src="@drawable/shipc" android:background="@null"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:textAppearance="?android:attr/textAppearanceSmall"
                           android:text="3 spaces" android:id="@+id/txtshipC"
-                          android:textSize="20dp" android:layout_marginLeft="6dp"/>
+                          android:textSize="20dp" android:layout_marginLeft="6dp"
+                          android:textColor="#ffffffff"/>
                 <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:text="Horizontal" android:id="@+id/shipC_check"
                           android:layout_below="@+id/gamelayerup"
                           android:layout_alignParentEnd="true" android:layout_marginLeft="17dp"
-                          android:checked="true"/>
+                          android:checked="true" android:textColor="#ffffffff"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

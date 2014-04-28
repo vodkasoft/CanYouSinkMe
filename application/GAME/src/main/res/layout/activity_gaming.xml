@@ -22,8 +22,9 @@
             android:id="@+id/shoot_btn"
             android:background="@null"
             android:src="@drawable/shoot_btn_disabled"
-            android:layout_alignParentEnd="true" android:layout_marginRight="5dp"
-            android:onClick="sendMissile"/>
+            android:onClick="sendMissile"
+            android:layout_alignBottom="@+id/textViewPlayerScore"
+            android:layout_alignEnd="@+id/container_grid_gaming"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,8 +37,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/opponent_btn"
-            android:layout_alignParentTop="true" android:layout_alignEnd="@+id/shoot_btn"
-            android:background="@null" android:src="@drawable/opponent_btn"/>
+            android:background="@null" android:src="@drawable/opponent_btn"
+            android:layout_alignParentTop="true" android:layout_alignParentEnd="true"/>
 
     <TextView
             android:layout_width="wrap_content"

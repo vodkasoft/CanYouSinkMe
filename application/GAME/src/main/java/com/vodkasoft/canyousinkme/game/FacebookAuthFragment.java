@@ -106,7 +106,7 @@ public class FacebookAuthFragment extends Fragment {
                         String facebookId = user.getId();
                         String displayname = user.getName();
                         String countryCode = DEFAULT_COUNTRY_CODE;
-                        Intent intent = new Intent(getActivity(), MenuFB.class);
+                        Intent intent = new Intent(getActivity(), WelcomeFB.class);
                         startActivity(intent);
                         FBSession.setName(displayname);
                         FBSession.setFacebookID(facebookId);

@@ -2,7 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.vodkasoft.canyousinkme.game.Main" android:background="#00aeff"
+                tools:context="com.vodkasoft.canyousinkme.game.Main" android:background="#2e2e2e"
         >
 
     <ImageView
@@ -28,9 +28,4 @@
             android:onClick="Facebook_Event"
             android:layout_below="@+id/main_main_logo" android:layout_centerHorizontal="true"
             android:layout_marginTop="80dp"/>
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/main_fb_profilepic"
-            android:layout_centerHorizontal="true"/>
 </RelativeLayout>

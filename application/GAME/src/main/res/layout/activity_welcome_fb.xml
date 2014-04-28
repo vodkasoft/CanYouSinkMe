@@ -16,6 +16,7 @@
 
     <com.facebook.widget.ProfilePictureView android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
+                                            android:background="@drawable/rounded"
                                             android:id="@+id/welcomefb_profilepicture"
                                             android:layout_below="@+id/main_main_logo"
                                             android:layout_centerHorizontal="true"

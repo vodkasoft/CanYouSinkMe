@@ -40,4 +40,7 @@ public interface IConstant {
     public static final int BLUETOOTH_MATCH = 0;
     public static final int LOCAL_MATCH = 1;
 
+    public static final String WINNER_CONDITION = "WINNER";
+    public static final String LOOSER_CONDITION = "LOOSER";
+
 }

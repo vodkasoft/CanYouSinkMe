@@ -13,9 +13,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
+import com.vodkasoft.canyousinkme.connectivity.BluetoothMessage;
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
 import com.vodkasoft.canyousinkme.gamelogic.IConstant;
+import com.vodkasoft.canyousinkme.gamelogic.MissileMessage;
+import com.vodkasoft.canyousinkme.utils.JsonSerializer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -24,10 +28,9 @@ public class Gaming extends Activity implements IConstant {
 
     private TextView textViewPlayerScore;
 
-    public void GoToPlayer(boolean isReceiving) throws InterruptedException, TimeoutException, ExecutionException {
+    public void goToPlayer(boolean isReceiving) throws InterruptedException, TimeoutException, ExecutionException {
 
-        UpdateMineButtons();
-
+        updateMineButtons();
         if (isReceiving && GameManager.getMatchType() == BLUETOOTH_MATCH) {
             waitForEnemyMissile();
         } else {
@@ -39,37 +42,40 @@ public class Gaming extends Activity implements IConstant {
 
     }
 
-    public void GoToOpponent() {
-        UpdateOpponentButtons();
+    public void goToOpponent() throws InterruptedException, ExecutionException, TimeoutException {
+
+        updateOpponentButtons();
+
         drawBoard(GameManager.getOpponentBoard());
+
     }
 
-    public void UpdateMineButtons() {
+    public void updateMineButtons() {
         ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
         Shoot.setEnabled(false);
         Shoot.setImageResource(R.drawable.shoot_btn_disabled);
-
-        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
-        Opponent.setEnabled(true);
-        Opponent.setImageResource(R.drawable.opponent_btn);
-
-        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
-        Mine.setEnabled(false);
-        Mine.setImageResource(R.drawable.mine_btn_disabled);
-    }
-
-    public void UpdateOpponentButtons() {
-        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
-        Shoot.setEnabled(true);
-        Shoot.setImageResource(R.drawable.shoot_btn);
 
         ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
         Opponent.setEnabled(false);
         Opponent.setImageResource(R.drawable.opponent_btn_disabled);
 
         ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
-        Mine.setEnabled(true);
+        Mine.setEnabled(false);
         Mine.setImageResource(R.drawable.mine_btn);
+    }
+
+    public void updateOpponentButtons() {
+        ImageButton Shoot = (ImageButton) findViewById(R.id.shoot_btn);
+        Shoot.setEnabled(true);
+        Shoot.setImageResource(R.drawable.shoot_btn);
+
+        ImageButton Opponent = (ImageButton) findViewById(R.id.opponent_btn);
+        Opponent.setEnabled(false);
+        Opponent.setImageResource(R.drawable.opponent_btn);
+
+        ImageButton Mine = (ImageButton) findViewById(R.id.mine_btn);
+        Mine.setEnabled(false);
+        Mine.setImageResource(R.drawable.mine_btn_disabled);
     }
 
     public void createOnClickListener(final GridView pgridView) {
@@ -113,7 +119,15 @@ public class Gaming extends Activity implements IConstant {
         GameManager.sendMissile();
         if (GameManager.getMatchType() == BLUETOOTH_MATCH)
             waitForMissileResult();
-        else GoToPlayer(false);
+        else {
+            checkGameState();
+            goToPlayer(false);
+        }
+    }
+
+    public void updateTimer(int secondsLeft){
+        TextView textViewTimer = (TextView) findViewById(R.id.textViewChronometer);
+        textViewTimer.setText(String.valueOf(secondsLeft));
     }
 
     public void checkGameState(){
@@ -124,11 +138,13 @@ public class Gaming extends Activity implements IConstant {
     }
 
     public void waitForEnemyMissile() throws InterruptedException, TimeoutException, ExecutionException {
+        checkGameState();
         EnemyMissileTask task = new EnemyMissileTask();
         task.execute();
     }
 
     public void waitForMissileResult() throws InterruptedException, TimeoutException, ExecutionException {
+        checkGameState();
         MissileResultTask task = new MissileResultTask();
         task.execute();
     }
@@ -152,7 +168,15 @@ public class Gaming extends Activity implements IConstant {
         buttonOpponent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GoToOpponent();
+                try {
+                    goToOpponent();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (TimeoutException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -160,7 +184,7 @@ public class Gaming extends Activity implements IConstant {
             @Override
             public void onClick(View view) {
                 try {
-                    GoToPlayer(false);
+                    goToPlayer(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -169,12 +193,28 @@ public class Gaming extends Activity implements IConstant {
 
         if (GameManager.getMatchType() == LOCAL_MATCH){
             GameManager.createCPUplayer();
-            GoToOpponent();
+            try {
+                goToOpponent();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            }
         } else if (GameManager.isHost() && GameManager.getMatchType() == BLUETOOTH_MATCH)
-            GoToOpponent();
+            try {
+                goToOpponent();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            }
         else {
             try {
-                GoToPlayer(true);
+                goToPlayer(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -183,38 +223,109 @@ public class Gaming extends Activity implements IConstant {
 
     }
 
-    private class EnemyMissileTask extends AsyncTask<Void, Void, Void> {
+    private class EnemyMissileTask extends AsyncTask<Void, Integer, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
 
-            GameManager.receiveMissile();
+            int timeLeft = WAIT_TIME;
+            BluetoothMessage btMessage;
+
+            while (timeLeft > 0) {
+                publishProgress(timeLeft);
+
+                if (!BleutoothManager.messageQueueIsEmpty()) {
+                    btMessage = BleutoothManager.dequeueMessage();
+                    if (btMessage.getKey() == MISSILE_MESSAGE_KEY) {
+                        MissileMessage mMessage = (MissileMessage) JsonSerializer.fromJsonToObject(btMessage.getData(), MissileMessage.class);
+                        if (GameManager.getPlayerBoard().isShip(mMessage.getxCoordinate(), mMessage.getyCoordinate())) {
+                            BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "true");
+                            GameManager.getPlayerBoard().putHit(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                            GameManager.addOpponentHit();
+                        } else {
+                            BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "false");
+                            GameManager.getPlayerBoard().putFail(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                        }
+                        break;
+                    }
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                timeLeft--;
+            }
 
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void params) {
-            GoToOpponent();
-        }
-
-    }
-
-    private class MissileResultTask extends AsyncTask<Void, Void, Void> {
-
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            GameManager.updateMissileResult();
-
-            return null;
+        protected void onProgressUpdate(Integer... progress){
+            updateTimer(progress[0]);
         }
 
         @Override
         protected void onPostExecute(Void params) {
             try {
-                GoToPlayer(true);
+                goToOpponent();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private class MissileResultTask extends AsyncTask<Void, Integer, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            int timeLeft = WAIT_TIME;
+            BluetoothMessage btMessage;
+
+            while (timeLeft > 0) {
+                publishProgress(timeLeft);
+
+                if (!BleutoothManager.messageQueueIsEmpty()) {
+                    btMessage = BleutoothManager.dequeueMessage();
+                    if (btMessage.getKey() == MISSILE_STATE_MESSAGE_KEY) {
+                        if (Boolean.valueOf(btMessage.getData())) {
+                            GameManager.addPlayerPoints();
+                            GameManager.addPlayerHit();
+                            GameManager.getOpponentBoard().putHit(GameManager.getMissileCoordinate()[X_COORDINATE], GameManager.getMissileCoordinate()[Y_COORDINATE]);
+                        } else {
+                            GameManager.getOpponentBoard().putFail(GameManager.getMissileCoordinate()[X_COORDINATE], GameManager.getMissileCoordinate()[Y_COORDINATE]);
+                        }
+                        break;
+                    }
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                timeLeft--;
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress){
+            updateTimer(progress[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Void params) {
+            try {
+                goToPlayer(true);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {

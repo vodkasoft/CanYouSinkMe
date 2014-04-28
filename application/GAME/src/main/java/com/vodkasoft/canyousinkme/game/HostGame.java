@@ -53,7 +53,6 @@ public class HostGame extends Activity {
             public void run() {
                 boolean isConnected = false;
                 for (int i=0; i<30; i++){
-                    Log.d("HOLIS", String.valueOf(BleutoothManager.isConnectionActive()));
                     if (BleutoothManager.isConnectionActive()){
                         isConnected = true;
                         break;

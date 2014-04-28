@@ -48,6 +48,7 @@ public class MenuGuest extends Activity implements IConstant{
     }
 
     public void GoToHostOrJoin(View view){
+        GameManager.setMatchType(BLUETOOTH_MATCH);
         Intent intent = new Intent(this, HostOrJoin.class);
         startActivity(intent);
     }
@@ -55,7 +56,6 @@ public class MenuGuest extends Activity implements IConstant{
     public void goToCreateBoard(View view){
         GameManager.setMatchType(LOCAL_MATCH);
         Intent intent = new Intent(this, CreateBoard.class);
-
         startActivity(intent);
     }
 }

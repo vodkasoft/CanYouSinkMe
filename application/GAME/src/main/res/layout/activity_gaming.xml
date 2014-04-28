@@ -35,7 +35,7 @@
             android:layout_marginLeft="40dp"
             android:layout_marginTop="10dp"/>
     <ImageButton
-            android:onClick="GoToOpponent"
+            android:onClick="goToOpponent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/opponent_btn"
@@ -58,6 +58,15 @@
         android:id="@+id/textViewPlayerScore"
         android:text="0" android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/container_grid_gaming" android:layout_marginBottom="100dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/textViewTimer"
+        android:layout_above="@+id/textViewChronometer"
+        android:layout_centerHorizontal="true"
+        android:text="0"/>
 
 
 </RelativeLayout>

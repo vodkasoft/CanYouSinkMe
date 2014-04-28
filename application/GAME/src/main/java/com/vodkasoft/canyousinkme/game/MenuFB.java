@@ -10,7 +10,32 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-public class MenuFB extends Activity {
+import com.vodkasoft.canyousinkme.gamelogic.GameManager;
+import com.vodkasoft.canyousinkme.gamelogic.IConstant;
+
+public class MenuFB extends Activity implements IConstant {
+
+    public void About_Event(View view) {
+        Intent intent = new Intent(this, About.class);
+        startActivity(intent);
+    }
+
+    public void GoToHostOrJoin(View view) {
+        GameManager.setMatchType(BLUETOOTH_MATCH);
+        Intent intent = new Intent(this, HostOrJoin.class);
+        startActivity(intent);
+    }
+
+    public void Leaderboards_Event(View view) {
+        Intent intent = new Intent(this, Leaderboards.class);
+        startActivity(intent);
+    }
+
+    public void goToCreateBoard(View view) {
+        GameManager.setMatchType(LOCAL_MATCH);
+        Intent intent = new Intent(this, CreateBoard.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +47,6 @@ public class MenuFB extends Activity {
         TextView TV = (TextView) findViewById(R.id.menufb_welcome_txt);
         TV.setText("Welcome, " + FBSession.getName());
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -43,13 +67,4 @@ public class MenuFB extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void About_Event(View view){
-        Intent intent = new Intent(this, About.class);
-        startActivity(intent);
-    }
-
-    public void Leaderboards_Event(View view){
-        Intent intent = new Intent(this, Leaderboards.class);
-        startActivity(intent);
-    }
 }

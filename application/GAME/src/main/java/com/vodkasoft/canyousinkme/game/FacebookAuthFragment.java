@@ -108,6 +108,9 @@ public class FacebookAuthFragment extends Fragment {
                         String countryCode = DEFAULT_COUNTRY_CODE;
                         Intent intent = new Intent(getActivity(), MenuFB.class);
                         startActivity(intent);
+                        FBSession.setName(displayname);
+                        FBSession.setFacebookID(facebookId);
+                        FBSession.setCountryCode(countryCode);
                     }
                 }
             }).executeAsync();

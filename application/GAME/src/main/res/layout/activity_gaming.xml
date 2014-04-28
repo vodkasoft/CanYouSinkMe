@@ -31,14 +31,16 @@
             android:id="@+id/mine_btn"
             android:src="@drawable/mine_btn_disabled" android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" android:background="@null"
-            android:onClick="GoToMine"/>
+            android:onClick="GoToMine" android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"/>
     <ImageButton
             android:onClick="GoToOpponent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/opponent_btn"
             android:background="@null" android:src="@drawable/opponent_btn"
-            android:layout_alignParentTop="true" android:layout_alignParentEnd="true"/>
+            android:layout_alignParentTop="true" android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp" android:layout_marginRight="40dp"/>
 
     <TextView
             android:layout_width="wrap_content"

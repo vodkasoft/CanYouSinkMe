@@ -125,7 +125,8 @@ public class DualMatrix implements IConstant {
      * @return
      */
     public boolean isShip(int pX, int pY) {
-        return _LOGIC[pX][pY] != EMPTY;
+
+        return _LOGIC[pX][pY] > 0 && _LOGIC[pX][pY] < 4  ;
     }
 
     /**

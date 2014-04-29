@@ -121,7 +121,7 @@ public class FacebookAuthFragment extends Fragment implements IConstant {
                                     @Override
                                     public void onError(String message) {
                                         Toast toast = Toast.makeText(getActivity(), USER_ERROR,
-                                                Toast.LENGTH_SHORT);
+                                                Toast.LENGTH_LONG);
                                         toast.show();
                                     }
 

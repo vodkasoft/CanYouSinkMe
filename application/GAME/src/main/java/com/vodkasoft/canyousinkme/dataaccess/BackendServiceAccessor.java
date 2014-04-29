@@ -45,7 +45,7 @@ public class BackendServiceAccessor {
     private static final int GLOBAL_LEADERBOARDS_METHOD = Request.Method.GET;
 
     /** Path for the global leaderboards request */
-    private static final String GLOBAL_LEADERBOARDS_PATH = "/leaderboards";
+    private static final String GLOBAL_LEADERBOARDS_PATH = "/leaderboards?accessToken=27b807e5e21f47b04fbfa7fd34d0ccb1c38a211308cecf331c6e97ffa3343d553cf1ca412ff904d5136d1798e15d372e92dc6965a3321950e5d15f2d3b8090400a89c3a6fd2b26269ac1f2b7a1fadda77c5f4d898d1f416b8fbe592e1db66443b15126b904fb819d1d465ddc9eeaf910e4a0ad4956";
 
     /** HTTP Method for the user creation request */
     private static final int USER_CREATION_METHOD = Request.Method.POST;

@@ -16,70 +16,13 @@
 
 from json import loads
 
-from google.appengine.ext.db import TransactionFailedError
 from google.appengine.ext.ndb import Key
-from google.appengine.api.datastore_errors import BadValueError
 
 from controller.base import JsonRequestHandler
 from model.datastore import User
 
 
-class _BaseUserHandler(JsonRequestHandler):
-    """ Base request handler for user data request """
-
-    def _create_or_update_user_from_json(self, user_data):
-        """ Creates or updates a user using data from a JSON object
-
-            Parameters:
-            :param user_data: JSON representation of the user data
-        """
-        try:
-            user_data = loads(user_data)
-            user_id = user_data['id']
-        except (AttributeError, ValueError):
-            self.write_message(400, {'error': 'Malformed JSON'})
-            return
-        self._create_or_update_user(user_id, user_data)
-
-    def _create_or_update_user(self, user_id, user_data):
-        """ Creates or updates a user
-
-            Parameters:
-            :param user_id: id of the user
-            :param user_data: data associated to the user
-        """
-        user = User.get_by_id(user_id)
-        try:
-            if user is not None:
-                # Update user
-                if user_data.get('avatar') is not None:
-                    user.avatar = user_data['avatar']
-                if user_data.get('countryCode') is not None:
-                    user.country_code = user_data['countryCode']
-                if user.country_code is 'ZZ':
-                    user.country_code = self.request.headers['X-Appengine-Country']
-                if user_data.get('displayName') is not None:
-                    user.display_name = user_data['displayName']
-                user.put()
-                status_code = 200
-            else:
-                # Create new user
-                User(id=user_id,
-                     avatar=user_data['avatar'],
-                     country_code=user_data['countryCode'],
-                     display_name=user_data['displayName']).put()
-                status_code = 201
-            self.write_message(status_code, {'id': user_id})
-        except KeyError:
-            self.write_message(400, {'error': 'Missing attributes for user'})
-        except TransactionFailedError:
-            self.write_message(400, {'error': 'Unable to store user'})
-        except BadValueError:
-            # Thrown when model validations fail
-            self.write_message(400, {'error': 'Invalid data'})
-
-
-class UserHandler(_BaseUserHandler):
+class UserHandler(JsonRequestHandler):
     """ Manages requests to a user's data """
 
     def get(self, user_id):
@@ -103,47 +46,15 @@ class UserHandler(_BaseUserHandler):
         try:
             user = User.get_by_id(user_id)
             json_result = {'id': user_id,
-                           'avatar': user.avatar,
                            'countryCode': user.country_code,
-                           'displayName': user.display_name,
                            'rank': user.rank,
                            'experience': user.experience}
             self.write_message(200, json_result)
         except AttributeError:
             self.write_message(400, {'error': 'Invalid user id'})
 
-    def put(self, user_id):
-        """ Creates or updates a user
 
-            Method: PUT
-            Path: /users/{user_id}
-
-            URI Parameters:
-            id              string              user's Facebook id
-
-            Request Parameters:
-            user            JSON object         data for the user
-            pretty          [true|false]        whether to output in human readable format or not
-
-            Parameters:
-            :param user_id: id of the user
-
-            Returns:
-            :return: a JSON object with the id of the user
-        """
-        user_data = self.request.get('user')
-        if user_data is None or user_data is '':
-            self.write_message(400, {'error': 'No user data was provided'})
-            return
-        try:
-            user_data = loads(user_data)
-        except (AttributeError, ValueError):
-            self.write_message(400, {'error': 'Malformed JSON'})
-            return
-        self._create_or_update_user(user_id, user_data)
-
-
-class UserSetHandler(_BaseUserHandler):
+class UserSetHandler(JsonRequestHandler):
     def get(self):
         """ Obtains user data for a list of user id's
 
@@ -168,9 +79,7 @@ class UserSetHandler(_BaseUserHandler):
             result = []
             for user in query.fetch():
                 result.append({'id': user.key.id(),
-                               'avatar': user.avatar,
                                'countryCode': user.country_code,
-                               'displayName': user.display_name,
                                'rank': user.rank})
             self.write_message(200, result)
         except ValueError:
@@ -191,8 +100,10 @@ class UserSetHandler(_BaseUserHandler):
             Returns:
             :return: a JSON object with the id of the user
         """
-        user_data = self.request.get('user')
-        if user_data is None or user_data is '':
-            self.write_message(400, {'error': 'No user data was provided'})
+        user_id = loads(self.request.body).get('id')
+        if user_id is None or user_id is '':
+            self.write_message(400, {'error': 'No user id was provided'})
             return
-        self._create_or_update_user_from_json(user_data)
+        User(id=user_id,
+             country_code=self.request.headers['X-Appengine-Country']).put()
+        self.write_message(201, {'id': user_id})

@@ -75,23 +75,14 @@ class Application(ndb.Model):
 class User(ndb.Model):
     """ User Entity """
 
-    """ Image that is displayed for the user """
-    avatar = ndb.TextProperty('a', indexed=False, required=True)
-
     """ Code for the country from where the user plays """
     country_code = ndb.StringProperty('c', indexed=True, required=True,
                                       validator=lambda prop, value: value.upper())
-
-    """ Name displayed during matches and match finding """
-    display_name = ndb.StringProperty('d', required=True)
 
     """ Total experienced the player has earned """
     experience = ndb.IntegerProperty('e', default=0, indexed=True, required=True,
                                      validator=lambda prop, value:
                                      _validate_non_negative_int(value))
-
-    """ Whether the player is logged in or not """
-    logged_in = ndb.BooleanProperty('l', default=False, required=True)
 
     """ Rank or level for the player, based on the experienced """
     rank = ndb.ComputedProperty(lambda self: int(sqrt(self.experience / float(_PERFECT_SCORE))))

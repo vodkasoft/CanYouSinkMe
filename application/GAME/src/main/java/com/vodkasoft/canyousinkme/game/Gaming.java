@@ -18,14 +18,21 @@ import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
 import com.vodkasoft.canyousinkme.connectivity.BluetoothMessage;
 import com.vodkasoft.canyousinkme.gamelogic.DualMatrix;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
-import com.vodkasoft.canyousinkme.gamelogic.IConstant;
 import com.vodkasoft.canyousinkme.gamelogic.MissileMessage;
 import com.vodkasoft.canyousinkme.utils.JsonSerializer;
+
+import static com.vodkasoft.canyousinkme.utils.Constant.BLUETOOTH_MATCH;
+import static com.vodkasoft.canyousinkme.utils.Constant.LOCAL_MATCH;
+import static com.vodkasoft.canyousinkme.utils.Constant.WAIT_TIME;
+import static com.vodkasoft.canyousinkme.utils.Constant.MISSILE_MESSAGE_KEY;
+import static com.vodkasoft.canyousinkme.utils.Constant.MISSILE_STATE_MESSAGE_KEY;
+import static com.vodkasoft.canyousinkme.utils.Constant.X_COORDINATE;
+import static com.vodkasoft.canyousinkme.utils.Constant.Y_COORDINATE;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-public class Gaming extends Activity implements IConstant {
+public class Gaming extends Activity{
 
     private TextView textViewPlayerScore;
 
@@ -208,7 +215,7 @@ public class Gaming extends Activity implements IConstant {
      * Timer for AI battles
      */
     public void waitForNextMove() {
-        CountDownTimer timer = new CountDownTimer(4000, 1000) {
+        CountDownTimer timer = new CountDownTimer(2000, 1000) {
             @Override
             public void onTick(long l) {
                 updateTimer((int) l / 1000);
@@ -286,9 +293,15 @@ public class Gaming extends Activity implements IConstant {
                     btMessage = BleutoothManager.dequeueMessage();
                     if (btMessage.getKey() == MISSILE_MESSAGE_KEY) {
                         MissileMessage mMessage = (MissileMessage) JsonSerializer.fromJsonToObject(btMessage.getData(), MissileMessage.class);
+
+                        if(!GameManager.opponentIdIsSet()){
+                            GameManager.setOpponentId(mMessage.getPlayerId());
+                        }
+
                         if (GameManager.getPlayerBoard().isShip(mMessage.getxCoordinate(), mMessage.getyCoordinate())) {
                             BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "true");
                             GameManager.getPlayerBoard().putHit(mMessage.getxCoordinate(), mMessage.getyCoordinate());
+                            GameManager.addOpponentPoints();
                             GameManager.addOpponentHit();
                         } else {
                             BleutoothManager.sendMessage(MISSILE_STATE_MESSAGE_KEY, "false");

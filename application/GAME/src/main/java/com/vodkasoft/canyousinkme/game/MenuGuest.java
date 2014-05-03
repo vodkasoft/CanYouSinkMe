@@ -10,9 +10,11 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
-import com.vodkasoft.canyousinkme.gamelogic.IConstant;
 
-public class MenuGuest extends Activity implements IConstant{
+import static com.vodkasoft.canyousinkme.utils.Constant.BLUETOOTH_MATCH;
+import static com.vodkasoft.canyousinkme.utils.Constant.LOCAL_MATCH;
+
+public class MenuGuest extends Activity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

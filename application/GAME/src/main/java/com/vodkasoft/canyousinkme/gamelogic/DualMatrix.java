@@ -4,7 +4,17 @@ import com.vodkasoft.canyousinkme.game.R;
 
 import java.util.Random;
 
-public class DualMatrix implements IConstant {
+import static com.vodkasoft.canyousinkme.utils.Constant.ROWS;
+import static com.vodkasoft.canyousinkme.utils.Constant.COLUMNS;
+import static com.vodkasoft.canyousinkme.utils.Constant.X_COORDINATE;
+import static com.vodkasoft.canyousinkme.utils.Constant.Y_COORDINATE;
+import static com.vodkasoft.canyousinkme.utils.Constant.SHIPA_SIZE;
+import static com.vodkasoft.canyousinkme.utils.Constant.SHIPB_SIZE;
+import static com.vodkasoft.canyousinkme.utils.Constant.SHIPC_SIZE;
+import static com.vodkasoft.canyousinkme.utils.Constant.FAIL;
+import static com.vodkasoft.canyousinkme.utils.Constant.HIT;
+
+public class DualMatrix {
 
     private final Random randomGenerator = new Random();
     private Integer[] _IMGs = new Integer[ROWS * COLUMNS];

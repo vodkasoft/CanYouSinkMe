@@ -17,9 +17,12 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.vodkasoft.canyousinkme.dataaccess.BackendServiceAccessor;
 import com.vodkasoft.canyousinkme.dataaccess.model.User;
-import com.vodkasoft.canyousinkme.gamelogic.IConstant;
 
-public class FacebookAuthFragment extends Fragment implements IConstant {
+import static com.vodkasoft.canyousinkme.utils.Constant.USER_ERROR;
+import static com.vodkasoft.canyousinkme.utils.Constant.BACKEND_HOST;
+
+
+public class FacebookAuthFragment extends Fragment {
 
     private static final String DEFAULT_AVATAR = "No image";
     private static final String DEFAULT_COUNTRY_CODE = "ZZ";

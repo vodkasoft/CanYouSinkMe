@@ -1,13 +1,27 @@
 package com.vodkasoft.canyousinkme.gamelogic;
 
 import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
+import com.vodkasoft.canyousinkme.game.FBSession;
 import com.vodkasoft.canyousinkme.utils.JsonSerializer;
+
+import static com.vodkasoft.canyousinkme.utils.Constant.BLUETOOTH_MATCH;
+import static com.vodkasoft.canyousinkme.utils.Constant.INITIAL_SCORE;
+import static com.vodkasoft.canyousinkme.utils.Constant.LOCAL_MATCH;
+import static com.vodkasoft.canyousinkme.utils.Constant.LOOSER_CONDITION;
+import static com.vodkasoft.canyousinkme.utils.Constant.MISSILE_MESSAGE_KEY;
+import static com.vodkasoft.canyousinkme.utils.Constant.MISSILE_SUCCESSFUL_POINTS;
+import static com.vodkasoft.canyousinkme.utils.Constant.SHIPA_SIZE;
+import static com.vodkasoft.canyousinkme.utils.Constant.SHIPB_SIZE;
+import static com.vodkasoft.canyousinkme.utils.Constant.SHIPC_SIZE;
+import static com.vodkasoft.canyousinkme.utils.Constant.WINNER_CONDITION;
+import static com.vodkasoft.canyousinkme.utils.Constant.X_COORDINATE;
+import static com.vodkasoft.canyousinkme.utils.Constant.Y_COORDINATE;
 
 /**
  * Vodkasoft (R)
  * Created by jomarin on 4/6/14.
  */
-public class GameManager implements IConstant {
+public class GameManager {
 
     private static String condition = null;
     private static CPUPlayer cpuPlayer = null;
@@ -16,6 +30,8 @@ public class GameManager implements IConstant {
     private static Integer[] missileCoordinate = new Integer[2];
     private static DualMatrix opponentBoard;
     private static int opponentHitCount;
+    private static String opponentId = "";
+    private static int opponentScore = INITIAL_SCORE;
     private static DualMatrix playerBoard = null;
     private static int playerHitCount;
     private static int playerScore = INITIAL_SCORE;
@@ -25,6 +41,13 @@ public class GameManager implements IConstant {
      */
     public static void addOpponentHit() {
         opponentHitCount++;
+    }
+
+    /**
+     * Adds points to opponent score
+     */
+    public static void addOpponentPoints() {
+        opponentScore += MISSILE_SUCCESSFUL_POINTS;
     }
 
     /**
@@ -50,6 +73,7 @@ public class GameManager implements IConstant {
 
     /**
      * Gets currents battle conditions (win/loose)
+     *
      * @return
      */
     public static String getCondition() {
@@ -58,6 +82,7 @@ public class GameManager implements IConstant {
 
     /**
      * Gets current battle type, bt or local
+     *
      * @return
      */
     public static int getMatchType() {
@@ -66,6 +91,7 @@ public class GameManager implements IConstant {
 
     /**
      * Sets matchtype
+     *
      * @param matchType
      */
     public static void setMatchType(int matchType) {
@@ -74,6 +100,7 @@ public class GameManager implements IConstant {
 
     /**
      * Gets coordinate from click event listener
+     *
      * @return
      */
     public static Integer[] getMissileCoordinate() {
@@ -82,6 +109,7 @@ public class GameManager implements IConstant {
 
     /**
      * Sets send missile coordinate from click listener
+     *
      * @param missileCoordinate point(x,y)
      */
     public static void setMissileCoordinate(Integer[] missileCoordinate) {
@@ -90,6 +118,7 @@ public class GameManager implements IConstant {
 
     /**
      * Gets opponent logic board
+     *
      * @return
      */
     public static DualMatrix getOpponentBoard() {
@@ -97,7 +126,44 @@ public class GameManager implements IConstant {
     }
 
     /**
+     * Gets opponent id
+     *
+     * @return string with id
+     */
+    public static String getOpponentId() {
+        return opponentId;
+    }
+
+    /**
+     * Sets opponent id
+     *
+     * @param opponentId id to be set
+     */
+    public static void setOpponentId(String opponentId) {
+        GameManager.opponentId = opponentId;
+    }
+
+    /**
+     * Gets opponent score
+     *
+     * @return integer with current opponent score
+     */
+    public static int getOpponentScore() {
+        return opponentScore;
+    }
+
+    /**
+     * Sets oppoent score
+     *
+     * @param opponentScore integer with score to be set
+     */
+    public static void setOpponentScore(int opponentScore) {
+        GameManager.opponentScore = opponentScore;
+    }
+
+    /**
      * Gets player logic board
+     *
      * @return
      */
     public static DualMatrix getPlayerBoard() {
@@ -106,6 +172,7 @@ public class GameManager implements IConstant {
 
     /**
      * Sets player board from createboard activity
+     *
      * @param playerBoard
      */
     public static void setPlayerBoard(DualMatrix playerBoard) {
@@ -114,6 +181,7 @@ public class GameManager implements IConstant {
 
     /**
      * Gets player current match score
+     *
      * @return
      */
     public static int getPlayerScore() {
@@ -122,6 +190,7 @@ public class GameManager implements IConstant {
 
     /**
      * Checks if there are still ships available for playing
+     *
      * @return
      */
     public static boolean isEndOfGame() {
@@ -140,6 +209,7 @@ public class GameManager implements IConstant {
 
     /**
      * Checks which player is host
+     *
      * @return
      */
     public static boolean isHost() {
@@ -148,10 +218,15 @@ public class GameManager implements IConstant {
 
     /**
      * Sets new host from host activity
+     *
      * @param host
      */
     public static void setHost(boolean host) {
         GameManager.host = host;
+    }
+
+    public static boolean opponentIdIsSet() {
+        return !opponentId.equals("");
     }
 
     public static void receiveMissile() {
@@ -171,11 +246,13 @@ public class GameManager implements IConstant {
      * Resets static members necessary for new match
      */
     public static void resetMatchData() {
-        opponentBoard = new DualMatrix(false);
         playerBoard = null;
         playerScore = INITIAL_SCORE;
         playerHitCount = 0;
+        opponentBoard = new DualMatrix(false);
         opponentHitCount = 0;
+        opponentId = "";
+        opponentScore = INITIAL_SCORE;
         condition = "";
     }
 
@@ -213,7 +290,7 @@ public class GameManager implements IConstant {
      * Sends missile via BluetoothMessage
      */
     private static void sendBluetoothMissile() {
-        MissileMessage missileMessage = new MissileMessage(missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
+        MissileMessage missileMessage = new MissileMessage(FBSession.getFacebookID(), missileCoordinate[X_COORDINATE], missileCoordinate[Y_COORDINATE]);
         String json = JsonSerializer.fromObjectToJson(missileMessage);
         BleutoothManager.sendMessage(MISSILE_MESSAGE_KEY, json);
     }

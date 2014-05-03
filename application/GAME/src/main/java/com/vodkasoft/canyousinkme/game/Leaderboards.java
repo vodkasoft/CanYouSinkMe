@@ -7,18 +7,19 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.vodkasoft.canyousinkme.dataaccess.BackendServiceAccessor;
 import com.vodkasoft.canyousinkme.dataaccess.model.User;
-import com.vodkasoft.canyousinkme.gamelogic.IConstant;
+
+import static com.vodkasoft.canyousinkme.utils.Constant.BACKEND_HOST;
+import static com.vodkasoft.canyousinkme.utils.Constant.LEADERBOARD_ERROR;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Leaderboards extends Activity implements IConstant{
+public class Leaderboards extends Activity {
 
     private void loadLeaderboard(){
 

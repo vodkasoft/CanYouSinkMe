@@ -3,11 +3,24 @@ package com.vodkasoft.canyousinkme.gamelogic;
 import java.util.LinkedList;
 import java.util.Random;
 
+import static com.vodkasoft.canyousinkme.utils.Constant.ROWS;
+import static com.vodkasoft.canyousinkme.utils.Constant.COLUMNS;
+import static com.vodkasoft.canyousinkme.utils.Constant.X_COORDINATE;
+import static com.vodkasoft.canyousinkme.utils.Constant.Y_COORDINATE;
+import static com.vodkasoft.canyousinkme.utils.Constant.NORTH;
+import static com.vodkasoft.canyousinkme.utils.Constant.NORTHEAST;
+import static com.vodkasoft.canyousinkme.utils.Constant.EAST;
+import static com.vodkasoft.canyousinkme.utils.Constant.SOUTHEAST;
+import static com.vodkasoft.canyousinkme.utils.Constant.SOUTH;
+import static com.vodkasoft.canyousinkme.utils.Constant.SOUTHWEST;
+import static com.vodkasoft.canyousinkme.utils.Constant.WEST;
+import static com.vodkasoft.canyousinkme.utils.Constant.NORTHWEST;
+
 /**
  * Vodkasoft (R)
  * Created by jomarin on 4/26/14.
  */
-public class CPUPlayer implements IConstant {
+public class CPUPlayer {
 
 
     private DualMatrix board;

@@ -6,12 +6,22 @@ package com.vodkasoft.canyousinkme.gamelogic;
  */
 public class MissileMessage {
 
+    private String playerId;
     private int xCoordinate;
     private int yCoordinate;
 
-    public MissileMessage(int xCoordinate, int yCoordinate) {
+    public MissileMessage(String playerId, int xCoordinate, int yCoordinate) {
+        this.playerId = playerId;
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
+    }
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
     }
 
     public int getxCoordinate() {

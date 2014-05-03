@@ -11,9 +11,12 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
-import com.vodkasoft.canyousinkme.gamelogic.IConstant;
 
-public class MenuFB extends Activity implements IConstant {
+import static com.vodkasoft.canyousinkme.utils.Constant.BLUETOOTH_MATCH;
+import static com.vodkasoft.canyousinkme.utils.Constant.LOCAL_MATCH;
+
+
+public class MenuFB extends Activity {
 
     public void About_Event(View view) {
         Intent intent = new Intent(this, About.class);

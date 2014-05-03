@@ -1,10 +1,14 @@
-package com.vodkasoft.canyousinkme.gamelogic;
+package com.vodkasoft.canyousinkme.utils;
 
 /**
  * Vodkasoft (R)
- * Created by jomarin on 4/27/14.
+ * Created by jomarin on 5/3/14.
  */
-public interface IConstant {
+public final class Constant {
+
+    private Constant(){
+        // restrict instantiation
+    }
 
     public static final int NORTH = 0;
     public static final int NORTHEAST = 1;
@@ -47,6 +51,5 @@ public interface IConstant {
 
     public static final String USER_ERROR = "Create user request couldn't be completed :'(";
     public static final String LEADERBOARD_ERROR = "Get leaderboard request couldn't be completed :'(";
-
 
 }

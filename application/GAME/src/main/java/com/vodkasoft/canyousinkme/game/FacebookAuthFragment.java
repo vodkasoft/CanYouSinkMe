@@ -114,8 +114,16 @@ public class FacebookAuthFragment extends Fragment {
                         FBSession.setFacebookID(facebookId);
                         FBSession.setCountryCode(countryCode);
 
+                        String appKey = getResources().getString(R.string.app_key);
+                        String clientSecret = getResources().getString(R.string.client_secret);
+                        String serverResponseKey = getResources().getString(R.string.server_response_key);
+
                         final BackendServiceAccessor backendServiceAccessor = new BackendServiceAccessor(
-                                BACKEND_HOST, getActivity().getApplicationContext());
+                                BACKEND_HOST,
+                                appKey,
+                                clientSecret,
+                                serverResponseKey,
+                                getActivity().getApplicationContext());
 
                         backendServiceAccessor.getUser(facebookId, new BackendServiceAccessor.Listener<User>() {
                             @Override

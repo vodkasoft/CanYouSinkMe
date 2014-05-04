@@ -23,7 +23,16 @@ public class Leaderboards extends Activity {
 
     private void loadLeaderboard(){
 
-        BackendServiceAccessor backendServiceAccessor = new BackendServiceAccessor(BACKEND_HOST, this);
+        String appKey = getResources().getString(R.string.app_key);
+        String clientSecret = getResources().getString(R.string.client_secret);
+        String serverResponseKey = getResources().getString(R.string.server_response_key);
+
+        BackendServiceAccessor backendServiceAccessor = new BackendServiceAccessor(
+                BACKEND_HOST,
+                appKey,
+                clientSecret,
+                serverResponseKey,
+                this);
 
         backendServiceAccessor.getGlobalLeaderboards(new BackendServiceAccessor.Listener<List<User>>() {
             @Override

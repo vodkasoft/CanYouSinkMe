@@ -51,5 +51,5 @@ public final class Constant {
 
     public static final String USER_ERROR = "Create user request couldn't be completed :'(";
     public static final String LEADERBOARD_ERROR = "Get leaderboard request couldn't be completed :'(";
-
+    public static final String MATCH_ERROR = "Match upload request couldn't be completed";
 }

@@ -28,4 +28,10 @@
     <string name="title_activity_welcome_fb">WelcomeFB</string>
     <string name="title_activity_match_summary">MatchSummary</string>
 
+    <string name="app_key">80a2d57bb64e4619b4a49c92bf7085d8</string>
+    <string name="client_secret">05adcc71abb741e2be28bc5f342dcccf</string>
+    <string name="server_response_key">8796954a959b4aaca887a042295ca11c</string>
+
+
+
 </resources>

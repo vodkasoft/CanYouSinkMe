@@ -7,8 +7,16 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.vodkasoft.canyousinkme.connectivity.BleutoothManager;
+import com.vodkasoft.canyousinkme.dataaccess.BackendServiceAccessor;
 import com.vodkasoft.canyousinkme.gamelogic.GameManager;
+
+import static com.vodkasoft.canyousinkme.utils.Constant.BACKEND_HOST;
+import static com.vodkasoft.canyousinkme.utils.Constant.BLUETOOTH_MATCH;
+import static com.vodkasoft.canyousinkme.utils.Constant.MATCH_ERROR;
+import static com.vodkasoft.canyousinkme.utils.Constant.USER_ERROR;
 
 public class MatchSummary extends Activity {
 
@@ -26,7 +34,50 @@ public class MatchSummary extends Activity {
         textViewScore.setText(String.valueOf(GameManager.getPlayerScore()));
         textViewCondition.setText(String.valueOf(GameManager.getCondition()));
 
+
+        if(GameManager.getMatchType() == BLUETOOTH_MATCH &&
+           GameManager.isHost()){
+
+            String appKey = getResources().getString(R.string.app_key);
+            String clientSecret = getResources().getString(R.string.client_secret);
+            String serverResponseKey = getResources().getString(R.string.server_response_key);
+
+            final BackendServiceAccessor backendServiceAccessor = new BackendServiceAccessor(
+                    BACKEND_HOST,
+                    appKey,
+                    clientSecret,
+                    serverResponseKey,
+                    this);
+
+            backendServiceAccessor.createMatch(
+                    FBSession.getFacebookID(),
+                    GameManager.getOpponentId(),
+                    GameManager.getPlayerScore(),
+                    GameManager.getOpponentScore(),
+                    new BackendServiceAccessor.Listener<String>() {
+                        @Override
+                        public void onError(String error) {
+                            Toast toast = Toast.makeText(
+                                    getApplicationContext(),
+                                    MATCH_ERROR,
+                                    Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+
+                        @Override
+                        public void onResponse(String response) {
+                            // Everything worked
+                            
+                        }
+                    }
+
+            );
+        }
+
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

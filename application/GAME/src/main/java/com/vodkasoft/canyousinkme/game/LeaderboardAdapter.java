@@ -8,6 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.facebook.widget.ProfilePictureView;
+import com.vodkasoft.canyousinkme.dataaccess.model.User;
+
+import java.util.List;
 
 /**
  * Vodkasoft (R)
@@ -17,11 +20,11 @@ public class LeaderboardAdapter extends BaseAdapter {
 
     private static LayoutInflater inflater = null;
     Context context;
-    String[] playerIds;
+    List<User> users;
 
-    public LeaderboardAdapter(Context mainActivity, String[] prgmNameList) {
+    public LeaderboardAdapter(Context mainActivity, List<User> pUsers) {
         // TODO Auto-generated constructor stub
-        playerIds = prgmNameList;
+        this.users = pUsers;
         context = mainActivity;
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -30,7 +33,7 @@ public class LeaderboardAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return playerIds.length;
+        return users.size();
     }
 
     @Override
@@ -51,16 +54,22 @@ public class LeaderboardAdapter extends BaseAdapter {
         Holder holder = new Holder();
         View rowView;
         rowView = inflater.inflate(R.layout.list_leaderboard_item, null);
-        holder.tv = (TextView) rowView.findViewById(R.id.textView1);
+        holder.playerId = (TextView) rowView.findViewById(R.id.textViewPlayerId);
         holder.profilePicture = (ProfilePictureView) rowView.findViewById(R.id.imageView1);
-        holder.tv.setText(playerIds[position]);
-        holder.profilePicture.setProfileId(playerIds[position]);
+        holder.rank = (TextView) rowView.findViewById(R.id.textViewRank);
+        holder.score = (TextView) rowView.findViewById(R.id.textViewScore);
 
+        holder.playerId.setText(users.get(position).getmId());
+        holder.profilePicture.setProfileId(users.get(position).getmId());
+        holder.rank.setText("Rank: " + String.valueOf(users.get(position).getRank()));
+        holder.score.setText("Points: " + String.valueOf(users.get(position).getExperience()));
         return rowView;
     }
 
     public class Holder {
         ProfilePictureView profilePicture;
-        TextView tv;
+        TextView playerId;
+        TextView score;
+        TextView rank;
     }
 }

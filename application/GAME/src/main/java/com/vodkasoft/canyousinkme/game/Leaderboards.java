@@ -43,16 +43,10 @@ public class Leaderboards extends Activity {
 
             @Override
             public void onResponse(List<User> response) {
-                String[] idList = new String[(response.size())];
-
-                int userIndex = 0;
-                for(User user : response){
-                    idList[userIndex++] = user.getmId();
-                }
 
                 ListView listViewLeaderboard = (ListView) findViewById(R.id.listViewLeaderboard);
 
-                listViewLeaderboard.setAdapter(new LeaderboardAdapter(getApplicationContext(), idList));
+                listViewLeaderboard.setAdapter(new LeaderboardAdapter(getApplicationContext(), response));
 
             }
         });

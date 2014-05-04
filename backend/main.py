@@ -35,5 +35,4 @@ app = webapp2.WSGIApplication([(r'/auth', AuthenticationHandler),
                                (r'/matches/(\S*)', MatchHandler),
                                (r'/users', UserSetHandler),
                                (r'/users/(\S*)/matches', UserMatchesHandler),
-                               (r'/users/(\S*)', UserHandler)],
-                              debug=True)
+                               (r'/users/(\S*)', UserHandler)])

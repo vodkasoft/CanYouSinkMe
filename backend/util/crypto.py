@@ -17,7 +17,6 @@
 from datetime import datetime
 from datetime import timedelta
 from calendar import timegm
-from uuid import uuid4
 from json import dumps, loads
 
 from Crypto.Cipher import AES
@@ -28,6 +27,10 @@ from Crypto.Hash import SHA256
 """ Key for access token encryption """
 __SERVER_SECRET_KEY = '211091945be5c4ef85834c6da082a8293ed2b9b0061ad1c09d33c32b65ebf873'
 __SERVER_SECRET_KEY = __SERVER_SECRET_KEY.decode('hex')
+
+""" Key for access token MAC creation """
+__SERVER_TAG_KEY = '6091e65f8d3d4a35b0089e9f0b8d7c2ba7f83d0e55d74c46922fa293a75bb335'
+__SERVER_TAG_KEY = __SERVER_TAG_KEY.decode('hex')
 
 
 def create_access_token(application_key):
@@ -41,13 +44,14 @@ def create_access_token(application_key):
     """
     expiration_data = datetime.now() + timedelta(minutes=15)
     expiration_timestamp = timegm(expiration_data.utctimetuple())
-    message = {'id': uuid4().hex,
-               'expiration': expiration_timestamp,
+    message = {'expiration': expiration_timestamp,
                'applicationKey': application_key}
     data = dumps(message, separators=(',', ':'))
     ctr = Counter.new(128)
     cipher = AES.new(__SERVER_SECRET_KEY, AES.MODE_CTR, counter=ctr)
-    return cipher.encrypt(data).encode('hex')
+    cipher_text = cipher.encrypt(data).encode('hex')
+    mac = create_mac(__SERVER_TAG_KEY, cipher_text)
+    return cipher_text + mac
 
 
 def get_application_key(access_token):
@@ -63,9 +67,18 @@ def get_application_key(access_token):
         :except: ValueError if the access token is invalid
         :except: TypeError if the access token is invalid
     """
+    try:
+        mac = access_token[-64:]
+        cipher_text = access_token[:-64]
+        if mac != create_mac(__SERVER_TAG_KEY, cipher_text):
+            # Invalid MAC
+            return None
+    except ValueError:
+        # Invalid MAC
+        return None
     ctr = Counter.new(128)
     cipher = AES.new(__SERVER_SECRET_KEY, AES.MODE_CTR, counter=ctr)
-    data = cipher.decrypt(access_token.decode('hex'))
+    data = cipher.decrypt(cipher_text.decode('hex'))
     message = loads(data)
     if message.get('expiration', -1) < timegm(datetime.now().utctimetuple()):
         return None

@@ -14,14 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from json import loads
-
 from google.appengine.ext import ndb
 from google.appengine.ext.db import TransactionFailedError
 from google.appengine.ext.ndb import Future
 from google.net.proto.ProtocolBuffer import ProtocolBufferDecodeError
-from google.appengine.api.datastore_errors import BadValueError
+from google.appengine.api.datastore_errors import BadValueError, BadRequestError
 
+from controller.authentication import access_token_required
 from controller.base import JsonRequestHandler
 from model.datastore import Match, User
 
@@ -29,16 +28,18 @@ from model.datastore import Match, User
 class UserMatchesHandler(JsonRequestHandler):
     """ Manages requests to the matches associated to a user """
 
+    @access_token_required
     def get(self, user_id):
-        """ Obtains the matches associated to a use
+        """ Obtains the matches associated to a user
 
             Method: GET
-            Path: /users/{id}/matches
+            Path: /users/{user_id}/matches
 
             URI Parameters:
-            id              string              id of the user
+            user_id         string              id of the user
 
             Request Parameters:
+            accessToken     string              token required to gain access to the resource
             offset          int                 number of entries to skip
             limit           int                 maximum number of entries to return
             pretty          [true|false]        whether to output in human readable format or not
@@ -49,12 +50,7 @@ class UserMatchesHandler(JsonRequestHandler):
             Returns:
             :return: a JSON array with the data for the requested matches
         """
-        query_offset = self.request.get('offset', 0)
-        query_limit = self.request.get('limit', 10)
-        if query_offset < 0 or type(query_offset) is not int:
-            self.write_error('Invalid offset')
-        if query_limit < 0 or type(query_limit) is not int:
-            self.write_error('Invalid limit')
+        query_offset, query_limit = self.get_offset_and_limit()
         user_key = ndb.Key(User, user_id)
         query = Match.query(ndb.OR(Match.host == user_key, Match.guest == user_key))
         result = []
@@ -65,20 +61,24 @@ class UserMatchesHandler(JsonRequestHandler):
                            'host': match.host.id(),
                            'hostPoints': match.host_points,
                            'timestamp': match.timestamp.isoformat()})
-        self.write_message(200, result)
+        self.write_signed_message(200, 'matches', result)
 
 
 class MatchHandler(JsonRequestHandler):
     """ Manages request to a specific match"""
 
+    @access_token_required
     def get(self, match_id):
         """ Obtains data for a specific match
 
             Method: GET
             Path: /matches/{match_id}
 
-            Request Parameters:
+            URI Parameters:
             match_id        int                 id of the match
+
+            Request Parameters:
+            accessToken     string              token required to gain access to the resource
             pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
@@ -96,10 +96,11 @@ class MatchHandler(JsonRequestHandler):
                            'host': match.host.id(),
                            'hostPoints': match.host_points,
                            'timestamp': match.timestamp.isoformat()}
-            self.write_message(200, json_result)
-        except AttributeError:
-            self.write_error('Invalid match id')
+            self.write_signed_message(200, 'match', json_result)
+        except (AttributeError, BadRequestError, ProtocolBufferDecodeError):
+            self.write_signed_error(400, 'Invalid match id')
 
+    @access_token_required
     def delete(self, match_id):
         """ Deletes a match
 
@@ -110,6 +111,7 @@ class MatchHandler(JsonRequestHandler):
             match_id        int                 id of the match
 
             Request Parameters:
+            accessToken     string              token required to gain access to the resource
             pretty          [true|false]        whether to output in human readable format or not
 
             Parameters:
@@ -121,11 +123,11 @@ class MatchHandler(JsonRequestHandler):
         try:
             key = ndb.Key(urlsafe=match_id)
             key.delete()
-            self.write_message(204)
+            self.write_signed_message(204)
         except (ProtocolBufferDecodeError, TypeError):
-            self.write_error('Invalid match id')
+            self.write_signed_error(400, 'Invalid match id')
         except TransactionFailedError:
-            self.write_error('Unable to delete match')
+            self.write_signed_error(400, 'Unable to delete match')
 
 
 @ndb.transactional(xg=True, retries=2)
@@ -154,6 +156,7 @@ def _update_entities(*entities):
 class MatchSetHandler(JsonRequestHandler):
     """ Manages request to matches """
 
+    @access_token_required
     def post(self):
         """ Creates a match
 
@@ -166,50 +169,41 @@ class MatchSetHandler(JsonRequestHandler):
             pretty          [true|false]        whether to output in human readable format or not
 
             Request Parameters:
+            accessToken     string              token required to gain access to the resource
             match           JSON object         data for the match
 
             :return: the key for the created match
         """
-        match_data = self.request.get('match')
-        if match_data is '':
-            self.write_error('No match data was provided')
-            return
+        match_data = self.get_from_body('match')
         try:
-            match_data = loads(match_data)
             guest_id = match_data['guest']
             guest_points = match_data['guestPoints']
             host_id = match_data['host']
             host_points = match_data['hostPoints']
             if host_id is guest_id:
-                status_code = 400
-                message = {'error': 'Host and guest id cannot be equal'}
-            else:
-                match = Match(guest=ndb.Key(User, guest_id),
-                              guest_points=guest_points,
-                              host=ndb.Key(User, host_id),
-                              host_points=host_points)
-                # Asynchronously update player data
-                guest_future = User.get_by_id_async(guest_id)
-                host_future = User.get_by_id_async(host_id)
-                guest = guest_future.get_result()
-                host = host_future.get_result()
-                guest.experience += guest_points
-                host.experience += host_points
-                # Update entities
-                results = _update_entities(match, host, guest)
-                # Prepare message
-                match_key = results[0].urlsafe()
-                status_code = 201
-                message = {'id': match_key}
-            self.write_message(status_code, message)
-        except ValueError:
-            self.write_error('Malformed JSON')
-        except KeyError:
-            self.write_error('Missing attributes for match')
+                self.write_signed_error(400, 'Host and guest id cannot be equal')
+            match = Match(guest=ndb.Key(User, guest_id),
+                          guest_points=guest_points,
+                          host=ndb.Key(User, host_id),
+                          host_points=host_points)
+            # Asynchronously update player data
+            guest_future = User.get_by_id_async(guest_id)
+            host_future = User.get_by_id_async(host_id)
+            guest = guest_future.get_result()
+            host = host_future.get_result()
+            guest.experience += guest_points
+            host.experience += host_points
+            # Update entities
+            results = _update_entities(match, host, guest)
+            # Prepare message
+            match_key = results[0].urlsafe()
+            self.write_signed_message(201, 'id', match_key)
+        except (KeyError, TypeError):
+            self.write_signed_error(400, 'Missing attributes for match')
         except TransactionFailedError:
-            self.write_message(507, 'Unable to store match')
+            self.write_signed_error(507, 'Unable to store match')
         except AttributeError:
-            self.write_error('Invalid id')
+            self.write_signed_error(400, 'Invalid id')
         except BadValueError:
             # Thrown when model validations fail
-            self.write_error('Invalid data')
+            self.write_signed_error(400, 'Invalid data')

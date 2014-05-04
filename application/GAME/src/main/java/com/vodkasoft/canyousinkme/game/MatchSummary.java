@@ -67,7 +67,7 @@ public class MatchSummary extends Activity {
                         @Override
                         public void onResponse(String response) {
                             // Everything worked
-                            
+
                         }
                     }
 

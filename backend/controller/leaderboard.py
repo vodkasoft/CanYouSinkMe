@@ -33,7 +33,7 @@ class _LeaderboardHandler(JsonRequestHandler):
         leaderboards = []
         for user_key in query.fetch(keys_only=True, offset=query_offset, limit=query_limit):
             leaderboards.append({'id': user_key.id()})
-        self.write_signed_message(200, 'leaderboards', leaderboards)
+        self.write_signed_message(200, 'leaderboard', leaderboards)
 
 
 class GlobalLeaderboardHandler(_LeaderboardHandler):

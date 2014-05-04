@@ -28,12 +28,12 @@ def encode_json(data, pretty):
         :return: data encoded as JSON
     """
     if pretty:
-        return format_as_pretty_json(data)
+        return __format_as_pretty_json(data)
     else:
-        return format_as_compact_json(data)
+        return __format_as_compact_json(data)
 
 
-def format_as_pretty_json(data):
+def __format_as_pretty_json(data):
     """ Encodes an object as JSON that is human readable
 
         Parameters:
@@ -45,8 +45,7 @@ def format_as_pretty_json(data):
     return dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
 
-# Formats
-def format_as_compact_json(data):
+def __format_as_compact_json(data):
     """ Encodes an object as JSON with the least amount of characters
 
 

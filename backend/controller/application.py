@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from json import loads
 from uuid import uuid4
 
+from google.appengine.api import users
 from google.appengine.api.datastore_errors import TransactionFailedError, BadValueError
 from google.appengine.ext import ndb
 from google.net.proto.ProtocolBuffer import ProtocolBufferDecodeError
-from webapp2_extras.appengine.users import admin_required
 
+from controller.authentication import require_admin_login
 from controller.base import JsonRequestHandler
 from model.datastore import Application
 
@@ -29,7 +29,7 @@ from model.datastore import Application
 class ApplicationSetHandler(JsonRequestHandler):
     """ Manages requests to the applications """
 
-    @admin_required
+    @require_admin_login
     def get(self):
         """ Obtains a user's data
 
@@ -50,128 +50,200 @@ class ApplicationSetHandler(JsonRequestHandler):
                            'apiCalls': application.api_calls,
                            'registrant': application.registrant,
                            'registered': application.registration_timestamp.isoformat()})
-        self.write_message(200, result)
+        self.write_message(200, 'applications', result)
 
+    @require_admin_login
     def post(self):
-        if not self.require_admin_login():
-            return
-        app_data = self.request.get('application')
-        if app_data is None or app_data is '':
-            self.write_message(400, {'error': 'No application data was provided'})
-            return
-        try:
-            app_data = loads(app_data)
-        except (AttributeError, ValueError):
-            self.write_message(400, {'error': 'Malformed JSON'})
-            return
+        """ Creates an application
 
+            Method: POST
+            Path: /applications
+
+            Request Parameters:
+            application     JSON object         data for the application
+            pretty          [true|false]        whether to output in human readable format or not
+
+            Returns:
+            :return: the application key for the new application
+        """
+        application_data = self.get_from_body('application')
         try:
             # Create new application
-            app_key = uuid4().hex
-            Application(id=app_key,
+            user = users.get_current_user()
+            if user is None:
+                self.write_error(400, 'Unable assign application to user')
+            application_key = uuid4().hex
+            Application(id=application_key,
                         client_secret=uuid4().hex,
                         server_response_key=uuid4().hex,
-                        name=app_data['name'],
-                        description=app_data.get('description', ''),
-                        registrant='Admin user').put()
-            status_code = 201
-            self.write_message(status_code, {'applicationKey': app_key})
+                        name=application_data['name'],
+                        description=application_data.get('description', ''),
+                        registrant=user.nickname()).put()
+            self.write_message(201, 'applicationKey', application_key)
         except KeyError:
-            self.write_message(400, {'error': 'Missing attributes for application'})
+            self.write_error(400, 'Missing attributes for application')
         except TransactionFailedError:
-            self.write_message(400, {'error': 'Unable to store application'})
+            self.write_error(400, 'Unable to store application')
         except BadValueError:
             # Thrown when model validations fail
-            self.write_message(400, {'error': 'Invalid data'})
+            self.write_error(400, 'Invalid data')
 
 
 class ApplicationHandler(JsonRequestHandler):
-    """ Manages requests to the matches associated to a user """
+    """ Manages requests to a specific application """
 
-    @admin_required
-    def get(self, app_key):
+    @require_admin_login
+    def get(self, application_key):
+        """ Obtains the data for an application
+
+            Method: GET
+            Path: /applications/{application_key}
+
+            URI Parameters:
+            application_key string              the key that identifies the application
+
+
+            Request Parameters:
+            pretty          [true|false]        whether to output in human readable format or not
+
+            Parameters:
+            :param application_key: the key that identifies the application
+
+            Returns:
+            :return: the data for the application
+        """
         try:
-            app = Application.get_by_id(app_key)
-            json_result = {'applicationKey': app_key,
-                           'name': app.name,
-                           'description': app.description,
-                           'clientSecret': app.client_secret,
-                           'serverResponseKey': app.server_response_key}
-            self.write_message(200, json_result)
+            application = Application.get_by_id(application_key)
+            json_result = {'applicationKey': application_key,
+                           'name': application.name,
+                           'description': application.description,
+                           'clientSecret': application.client_secret,
+                           'serverResponseKey': application.server_response_key}
+            self.write_message(200, 'application', json_result)
         except AttributeError:
-            self.write_message(400, {'error': 'Invalid application key'})
+            self.write_error(400, 'Invalid application key')
 
-    def delete(self, app_key):
-        if not self.require_admin_login():
-            return
+    @require_admin_login
+    def delete(self, application_key):
+        """ Deletes an application
+
+            Method: DELETE
+            Path: /applications/{application_key}
+
+            URI Parameters:
+            application_key string              the key that identifies the application
+
+            Request Parameters:
+            pretty          [true|false]        whether to output in human readable format or not
+
+            Parameters:
+            :param application_key: the key that identifies the application
+        """
         try:
-            ndb.Key(Application, app_key).delete()
+            ndb.Key(Application, application_key).delete()
             self.write_message(204)
         except (ProtocolBufferDecodeError, TypeError):
-            self.write_error('Invalid application key')
+            self.write_error(400, 'Invalid application key')
         except TransactionFailedError:
-            self.write_error('Unable to delete application')
+            self.write_error(400, 'Unable to delete application')
 
-    def put(self, app_key):
-        if not self.require_admin_login():
-            return
-        app_data = self.request.get('application')
-        if app_data is None or app_data is '':
-            self.write_message(400, {'error': 'No application data was provided'})
-            return
-        try:
-            app_data = loads(app_data)
-        except (AttributeError, ValueError):
-            self.write_message(400, {'error': 'Malformed JSON'})
-            return
+    @require_admin_login
+    def put(self, application_key):
+        """ Updates an application
 
-        app = Application.get_by_id(app_key)
+            Method: PUT
+            Path: /applications/{application_key}
+
+            URI Parameters:
+            application_key string              the key that identifies the application
+
+            Request Parameters:
+            application     JSON object         the new data for the application
+            pretty          [true|false]        whether to output in human readable format or not
+
+            Parameters:
+            :param application_key: the key that identifies the application
+
+            Returns:
+            :return: the application key
+        """
+        application_data = self.get_from_body('application')
+        application = Application.get_by_id(application_key)
         try:
-            if app is not None:
+            if application is not None:
                 # Update application
-                if app_data.get('name') is not None:
-                    app.name = app_data['name']
-                if app_data.get('description') is not None:
-                    app.description = app_data['description']
-                app.put()
-                status_code = 200
-                message = {'applicationKey': app_key}
+                if application_data.get('name') is not None:
+                    application.name = application_data['name']
+                if application_data.get('description') is not None:
+                    application.description = application_data['description']
+                application.put()
+                self.write_message(200, 'applicationKey', application_key)
             else:
-                status_code = 400
-                message = {'error': 'Invalid application key'}
+                self.write_error(400, 'Invalid application key')
         except TransactionFailedError:
-            status_code = 400
-            message = {'error': 'Unable to store application'}
+            self.write_error(400, 'Unable to store application')
         except BadValueError:
             # Thrown when model validations fail
-            status_code = 400
-            message = {'error': 'Invalid data'}
-        self.write_message(status_code, message)
+            self.write_error(400, 'Invalid data')
 
 
 class ClientSecretKeyHandler(JsonRequestHandler):
-    def post(self, app_key):
-        if not self.require_admin_login():
-            return
+    """ Manages request to an application's client secret key """
+
+    @require_admin_login
+    def post(self, application_key):
+        """ Regenerates a client secret key
+
+            Method: POST
+            Path: /applications/{application_key}/client/secret
+
+            URI Parameters:
+            application_key string              the key that identifies the application
+
+            Request Parameters:
+            pretty          [true|false]        whether to output in human readable format or not
+
+            Parameters:
+            :param application_key: the key that identifies the application
+
+            Returns
+            :return: the new client secret key
+        """
         try:
-            app = Application.get_by_id(app_key)
-            app.client_secret = uuid4().hex
-            app.put()
-            json_result = {'clientSecret': app.client_secret}
-            self.write_message(200, json_result)
+            application = Application.get_by_id(application_key)
+            application.client_secret = uuid4().hex
+            application.put()
+            self.write_message(200, 'clientSecret', application.client_secret)
         except AttributeError:
-            self.write_message(400, {'error': 'Invalid application key'})
+            self.write_error(400, 'Invalid application key')
 
 
 class ServerResponseKeyHandler(JsonRequestHandler):
-    def post(self, app_key):
-        if not self.require_admin_login():
-            return
+    """ Manages request to an application's server response key """
+
+    @require_admin_login
+    def post(self, application_key):
+        """ Regenerates a server response key
+
+            Method: POST
+            Path: /applications/{application_key}/server/key
+
+            URI Parameters:
+            application_key string              the key that identifies the application
+
+            Request Parameters:
+            pretty          [true|false]        whether to output in human readable format or not
+
+            Parameters:
+            :param application_key: the key that identifies the application
+
+            Returns
+            :return: the new client secret key
+        """
         try:
-            app = Application.get_by_id(app_key)
-            app.server_response_key = uuid4().hex
-            app.put()
-            json_result = {'serverResponseKey': app.server_response_key}
-            self.write_message(200, json_result)
+            application = Application.get_by_id(application_key)
+            application.server_response_key = uuid4().hex
+            application.put()
+            self.write_message(200, 'serverResponseKey', application.server_response_key)
         except AttributeError:
-            self.write_message(400, {'error': 'Invalid application key'})
+            self.write_message(400, 'Invalid application key')

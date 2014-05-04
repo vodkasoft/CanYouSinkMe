@@ -198,7 +198,7 @@ class MatchSetHandler(JsonRequestHandler):
             # Prepare message
             match_key = results[0].urlsafe()
             self.write_signed_message(201, 'id', match_key)
-        except KeyError:
+        except (KeyError, TypeError):
             self.write_signed_error(400, 'Missing attributes for match')
         except TransactionFailedError:
             self.write_signed_error(507, 'Unable to store match')

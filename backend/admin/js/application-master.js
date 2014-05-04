@@ -1,8 +1,24 @@
+// Copyright 2014 Vodkasoft
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 /* global angular */
 /* global console */
 
+// Module
 var applicationMasterModule = angular.module('applicationMaster', []);
 
+// Controller
 applicationMasterModule.controller('MainController', ['$scope', '$http', function($scope, $http) {
 
   // Retrieve and display all applications
@@ -10,11 +26,12 @@ applicationMasterModule.controller('MainController', ['$scope', '$http', functio
     // Send request
     $http.get('/applications')
     .success(function(data) {
+      var apps = data.applications;
       // Convert dates from UTC to local time
-      for (var i = data.length - 1; i >= 0; i--) {
-        data[i].registered = new Date(Date.parse(data[i].registered));
+      for (var i = apps.length - 1; i >= 0; i--) {
+        apps[i].registered = new Date(Date.parse(apps[i].registered));
       }
-      $scope.applications = data;
+      $scope.applications = apps;
     }).error(function() {
       // Alert error
       $('#general-alert .alert').alert('close');
@@ -37,8 +54,8 @@ applicationMasterModule.controller('MainController', ['$scope', '$http', functio
       // Remove validation error styles
       $('#new-application-name-form-group').removeClass('has-error');
       // Send request
-      $http.post('/applications', "application=" + encodeURIComponent(JSON.stringify($scope.newApp)), {
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+      $http.post('/applications', {application: $scope.newApp}, {
+        headers: {'Content-Type': 'application/json'}
       })
       .success(function() {
         // Inform application was created, require refresh

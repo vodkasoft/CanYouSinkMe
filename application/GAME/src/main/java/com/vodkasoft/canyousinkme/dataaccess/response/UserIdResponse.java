@@ -19,6 +19,6 @@ public class UserIdResponse extends AuthenticatedResponse {
 
     @Override
     protected String getMessage() {
-        return null;
+        return "\"" + mId + "\"";
     }
 }

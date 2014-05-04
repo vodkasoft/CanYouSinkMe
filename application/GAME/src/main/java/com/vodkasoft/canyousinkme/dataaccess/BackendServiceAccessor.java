@@ -17,9 +17,7 @@
 package com.vodkasoft.canyousinkme.dataaccess;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -27,37 +25,32 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.vodkasoft.canyousinkme.dataaccess.model.User;
+import com.vodkasoft.canyousinkme.dataaccess.request.MatchCreationRequest;
+import com.vodkasoft.canyousinkme.dataaccess.request.UseCreationRequest;
+import com.vodkasoft.canyousinkme.dataaccess.response.AccessTokenResponse;
+import com.vodkasoft.canyousinkme.dataaccess.response.LeaderboardResponse;
+import com.vodkasoft.canyousinkme.dataaccess.response.MatchIdResponse;
+import com.vodkasoft.canyousinkme.dataaccess.response.UserIdResponse;
+import com.vodkasoft.canyousinkme.dataaccess.response.UserResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Manages access to backend data
  */
-public class BackendServiceAccessor {
+public class BackendServiceAccessor implements EndpointsConstants {
 
-    /** HTTP Method for the global leaderboards request */
-    private static final int GLOBAL_LEADERBOARDS_METHOD = Request.Method.GET;
+    /** Key that identifies the application */
+    private final String mApplicationKey;
 
-    /** Path for the global leaderboards request */
-    private static final String GLOBAL_LEADERBOARDS_PATH = "/leaderboards?accessToken=27b807e5e21f47b04fbfa7fd34d0ccb1c38a211308cecf331c6e97ffa3343d553cf1ca412ff904d5136d1798e15d372e92dc6965a3321950e5d15f2d3b8090400a89c3a6fd2b26269ac1f2b7a1fadda77c5f4d898d1f416b8fbe592e1db66443b15126b904fb819d1d465ddc9eeaf910e4a0ad4956";
-
-    /** HTTP Method for the user creation request */
-    private static final int USER_CREATION_METHOD = Request.Method.POST;
-
-    /** Path for the user retrieval request */
-    private static final String USER_CREATION_PATH = "/users";
-
-    /** Base path for the user retrieval request */
-    private static final String USER_RETRIEVE_BASE_PATH = "/users";
-
-    /** HTTP Method for the user retrieval request */
-    private static final int USER_RETRIEVE_METHOD = Request.Method.GET;
+    /** Key to prove the client's identity */
+    private final String mClientSecret;
 
     /** Host to which requests will be sent */
     private final String mHost;
@@ -68,15 +61,77 @@ public class BackendServiceAccessor {
     /** JSON serializer */
     private final Gson mSerializer = new Gson();
 
+    /** Key to verify messages from the server */
+    private final String mServerResponseKey;
+
+    /** Access token required for authenticated requests */
+    private String mAccessToken = null;
+
+    /** Expiration date and time for the current access token */
+    private Date mExpiration;
+
     /**
      * Creates a BackendServiceAccessor
      *
      * @param host    the host to which requests will be sent
      * @param context the context to which the requests will be relative
      */
-    public BackendServiceAccessor(String host, Context context) {
+    public BackendServiceAccessor(String host, String applicationKey,
+            String clientSecret,
+            String serverResponseKey,
+            Context context) {
         mHost = host;
+        mApplicationKey = applicationKey;
+        mClientSecret = clientSecret;
+        mServerResponseKey = serverResponseKey;
         mRequestQueue = Volley.newRequestQueue(context);
+    }
+
+    public void createMatch(final String hostId, final String guestId, final int hostPoints,
+            final int guestPoints, final Listener<String> listener) {
+        refreshAccessToken(new Listener<Void>() {
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+            }
+
+            @Override
+            public void onResponse(Void response) {
+                JsonObjectRequest request = null;
+                MatchCreationRequest requestData = new MatchCreationRequest(hostId, guestId,
+                        hostPoints, guestPoints, mAccessToken);
+                try {
+                    request = new JsonObjectRequest(
+                            MATCH_CREATION_METHOD,
+                            mHost + MATCH_CREATION_PATH,
+                            new JSONObject(mSerializer.toJson(requestData)),
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    MatchIdResponse response = mSerializer.fromJson(
+                                            jsonObject.toString(), MatchIdResponse.class);
+                                    if (response == null) {
+                                        listener.onError("Unable to create match");
+                                    } else if (!response.messageIsValid(mServerResponseKey)) {
+                                        listener.onError("Invalid server response");
+                                    } else {
+                                        listener.onResponse(response.getId());
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    listener.onError(new String(volleyError.networkResponse.data));
+                                }
+                            }
+                    );
+                } catch (JSONException e) {
+                    listener.onError("Unable to create user");
+                }
+                mRequestQueue.add(request);
+            }
+        });
     }
 
     /**
@@ -85,34 +140,49 @@ public class BackendServiceAccessor {
      * @param id       the id for the user
      * @param listener the listener that will handle the callbacks
      */
-    public void createUser(String id, final Listener<String> listener) {
-        JsonObjectRequest request = null;
-        try {
-            request = new JsonObjectRequest(
-                    USER_CREATION_METHOD,
-                    mHost + USER_CREATION_PATH,
-                    new JSONObject(mSerializer.toJson(new UserId(id))),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            try {
-                                listener.onResponse(jsonObject.getString("id"));
-                            } catch (JSONException e) {
-                                listener.onError("Unable to create user");
+    public void createUser(final String id, final Listener<String> listener) {
+        refreshAccessToken(new Listener<Void>() {
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+            }
+
+            @Override
+            public void onResponse(Void response) {
+                JsonObjectRequest request = null;
+                UseCreationRequest requestData = new UseCreationRequest(id, mAccessToken);
+                try {
+                    request = new JsonObjectRequest(
+                            USER_CREATION_METHOD,
+                            mHost + USER_CREATION_PATH,
+                            new JSONObject(mSerializer.toJson(requestData)),
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    UserIdResponse response = mSerializer.fromJson(
+                                            jsonObject.toString(), UserIdResponse.class);
+                                    if (response == null) {
+                                        listener.onError("Unable to create user");
+                                    } else if (!response.messageIsValid(mServerResponseKey)) {
+                                        listener.onError("Invalid server response");
+                                    } else {
+                                        listener.onResponse(response.getId());
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    listener.onError(new String(volleyError.networkResponse.data));
+                                }
                             }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            listener.onError(new String(volleyError.networkResponse.data));
-                        }
-                    }
-            );
-        } catch (JSONException e) {
-            listener.onError("Unable to create user");
-        }
-        mRequestQueue.add(request);
+                    );
+                } catch (JSONException e) {
+                    listener.onError("Unable to create user");
+                }
+                mRequestQueue.add(request);
+            }
+        });
     }
 
     /**
@@ -121,18 +191,113 @@ public class BackendServiceAccessor {
      * @param listener the listener that will handle the callbacks
      */
     public void getGlobalLeaderboards(final Listener<List<User>> listener) {
+        refreshAccessToken(new Listener<Void>() {
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+            }
+
+            @Override
+            public void onResponse(Void response) {
+                StringRequest request = new StringRequest(
+                        GLOBAL_LEADERBOARDS_METHOD,
+                        mHost + GLOBAL_LEADERBOARDS_PATH + '?' +
+                                "accessToken=" + mAccessToken.toString(),
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String jsonUserArray) {
+                                LeaderboardResponse response = mSerializer
+                                        .fromJson(jsonUserArray, LeaderboardResponse.class);
+                                if (response == null) {
+                                    listener.onError("Unable to retrieve leaderboard");
+                                } else if (!response.messageIsValid(mServerResponseKey)) {
+                                    listener.onError("Invalid server response");
+                                } else {
+                                    listener.onResponse(response.getLeaderboard());
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                listener.onError(new String(volleyError.networkResponse.data));
+                            }
+                        }
+                );
+                mRequestQueue.add(request);
+            }
+        });
+    }
+
+    /**
+     * Gets the data for a user
+     *
+     * @param id       the id of the user
+     * @param listener the listeners that will handle the callbacks
+     */
+    public void getUser(final String id, final Listener<User> listener) {
+        refreshAccessToken(new Listener<Void>() {
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+            }
+
+            @Override
+            public void onResponse(Void response) {
+                JsonObjectRequest request = new JsonObjectRequest(
+                        USER_RETRIEVE_METHOD,
+                        mHost + USER_RETRIEVE_BASE_PATH + '/' + id + '?' +
+                                "accessToken=" + mAccessToken.toString(),
+                        null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                UserResponse response = mSerializer
+                                        .fromJson(jsonObject.toString(), UserResponse.class);
+                                if (response == null) {
+                                    listener.onError("Unable to retrieve user");
+                                } else if (!response.messageIsValid(mServerResponseKey)) {
+                                    listener.onError("Invalid server response");
+                                } else {
+                                    listener.onResponse(response.getUser());
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                listener.onError(new String(volleyError.networkResponse.data));
+                            }
+                        }
+                );
+                mRequestQueue.add(request);
+            }
+        });
+    }
+
+    private void refreshAccessToken(final Listener<Void> listener) {
+        if (mAccessToken != null && mExpiration.after(new Date())) {
+            listener.onResponse(null);
+        }
         StringRequest request = new StringRequest(
-                GLOBAL_LEADERBOARDS_METHOD,
-                mHost + GLOBAL_LEADERBOARDS_PATH,
+                AUTHENTICATION_METHOD,
+                mHost + AUTHENTICATION_PATH + '?' +
+                        "applicationKey=" + mApplicationKey + '&' +
+                        "clientSecret=" + mClientSecret,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String jsonUserArray) {
-                        User[] users = mSerializer.fromJson(jsonUserArray, User[].class);
-                        if (users == null) {
-                            listener.onError("Unable to retrieve leaderboards");
-                            return;
+                        AccessTokenResponse response = mSerializer
+                                .fromJson(jsonUserArray, AccessTokenResponse.class);
+                        if (response == null) {
+                            listener.onError("Unable to retrieve user");
+                        } else if (!response.messageIsValid(mServerResponseKey)) {
+                            listener.onError("Invalid server response");
+                        } else {
+                            mAccessToken = response.getAccessToken();
+                            mExpiration = new Date(System.currentTimeMillis() + EXPIRATION_MILLIS);
+                            listener.onResponse(null);
                         }
-                        listener.onResponse(Arrays.asList(users));
                     }
                 },
                 new Response.ErrorListener() {
@@ -146,68 +311,14 @@ public class BackendServiceAccessor {
     }
 
     /**
-     * Gets the data for a user
-     *
-     * @param id       the id of the user
-     * @param listener the listeners that will handle the callbacks
-     */
-    public void getUser(String id, final Listener<User> listener) {
-        JsonObjectRequest request = null;
-        try {
-            request = new JsonObjectRequest(
-                    USER_RETRIEVE_METHOD,
-                    mHost + USER_RETRIEVE_BASE_PATH + '/' + id,
-                    new JSONObject(mSerializer.toJson(new UserId(id))),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            User user = mSerializer.fromJson(jsonObject.toString(), User.class);
-                            if (user == null) {
-                                listener.onError("Unable to retrieve user data");
-                                return;
-                            }
-                            listener.onResponse(user);
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            listener.onError(new String(volleyError.networkResponse.data));
-                        }
-                    }
-            );
-        } catch (JSONException e) {
-            listener.onError("Unable to retrieve user data");
-        }
-        mRequestQueue.add(request);
-    }
-
-    /**
      * Handler for backend requests callbacks
      *
-     * @param <T> the type of the object sent on a successful callback
+     * @param <R> the type of the object sent on a successful callback
      */
-    public interface Listener<T> {
+    public interface Listener<R> {
 
-        void onError(String message);
+        void onError(String error);
 
-        void onResponse(T response);
-    }
-
-    /** Container for a request on user id */
-    private class UserId {
-
-        /** Id for the user */
-        @SerializedName("id")
-        private final String mId;
-
-        /**
-         * Creates a UserId
-         *
-         * @param id the id that will be wrapped
-         */
-        public UserId(String id) {
-            mId = id;
-        }
+        void onResponse(R response);
     }
 }

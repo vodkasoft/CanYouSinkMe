@@ -1,5 +1,6 @@
 package com.vodkasoft.canyousinkme.dataaccess.response;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import com.vodkasoft.canyousinkme.dataaccess.model.User;
@@ -23,6 +24,21 @@ public class LeaderboardResponse extends AuthenticatedResponse {
 
     @Override
     protected String getMessage() {
-        return null;
+        UserId userIds[] = new UserId[mLeaderboard.length];
+        for (int i = 0; i < mLeaderboard.length; i++) {
+            userIds[i] = new UserId(mLeaderboard[i].getId());
+        }
+        return new Gson().toJson(userIds);
+    }
+
+    private class UserId {
+
+        /** Id for the user */
+        @SerializedName("id")
+        private final String mId;
+
+        public UserId(String id) {
+            mId = id;
+        }
     }
 }

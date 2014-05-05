@@ -122,7 +122,12 @@ public class BackendServiceAccessor implements EndpointsConstants {
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError volleyError) {
-                                    listener.onError(new String(volleyError.networkResponse.data));
+                                    if (volleyError.networkResponse == null) {
+                                        listener.onError("Unable to connect to server");
+                                    } else {
+                                        listener.onError(
+                                                new String(volleyError.networkResponse.data));
+                                    }
                                 }
                             }
                     );
@@ -173,7 +178,12 @@ public class BackendServiceAccessor implements EndpointsConstants {
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError volleyError) {
-                                    listener.onError(new String(volleyError.networkResponse.data));
+                                    if (volleyError.networkResponse == null) {
+                                        listener.onError("Unable to connect to server");
+                                    } else {
+                                        listener.onError(
+                                                new String(volleyError.networkResponse.data));
+                                    }
                                 }
                             }
                     );
@@ -220,7 +230,11 @@ public class BackendServiceAccessor implements EndpointsConstants {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
-                                listener.onError(new String(volleyError.networkResponse.data));
+                                if (volleyError.networkResponse == null) {
+                                    listener.onError("Unable to connect to server");
+                                } else {
+                                    listener.onError(new String(volleyError.networkResponse.data));
+                                }
                             }
                         }
                 );
@@ -266,7 +280,11 @@ public class BackendServiceAccessor implements EndpointsConstants {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError volleyError) {
-                                listener.onError(new String(volleyError.networkResponse.data));
+                                if (volleyError.networkResponse == null) {
+                                    listener.onError("Unable to connect to server");
+                                } else {
+                                    listener.onError(new String(volleyError.networkResponse.data));
+                                }
                             }
                         }
                 );
@@ -303,7 +321,11 @@ public class BackendServiceAccessor implements EndpointsConstants {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        listener.onError(new String(volleyError.networkResponse.data));
+                        if (volleyError.networkResponse == null) {
+                            listener.onError("Unable to connect to server");
+                        } else {
+                            listener.onError(new String(volleyError.networkResponse.data));
+                        }
                     }
                 }
         );

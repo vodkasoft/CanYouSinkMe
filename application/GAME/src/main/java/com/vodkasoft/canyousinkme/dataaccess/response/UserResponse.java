@@ -1,5 +1,6 @@
 package com.vodkasoft.canyousinkme.dataaccess.response;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import com.vodkasoft.canyousinkme.dataaccess.model.User;
@@ -20,6 +21,6 @@ public class UserResponse extends AuthenticatedResponse {
 
     @Override
     protected String getMessage() {
-        return null;
+        return new Gson().toJson(mUser);
     }
 }

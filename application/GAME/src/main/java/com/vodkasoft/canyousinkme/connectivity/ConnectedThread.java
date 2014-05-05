@@ -17,7 +17,7 @@ import java.io.OutputStream;
 public class ConnectedThread extends Thread {
 
     private final String MESSAGE_KEY = "CanYouSinkMe?";
-    private final int BUFFER_SIZE = 64;
+    private final int BUFFER_SIZE = 1024;
     private final String CHAR_BEFORE_GARBAGE = "}";
     private final int MESSAGE_SUBSTRING_START_INDEX = 0;
     private final int EXCLUSIVE_INDEX_FIXER = 1;

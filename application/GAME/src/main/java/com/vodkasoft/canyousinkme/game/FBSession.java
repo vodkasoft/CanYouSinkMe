@@ -1,7 +1,7 @@
 package com.vodkasoft.canyousinkme.game;
 
 public class FBSession {
-    private static String FacebookID;
+    private static String FacebookID = "";
     private static String Name;
     private static String CountryCode;
 
